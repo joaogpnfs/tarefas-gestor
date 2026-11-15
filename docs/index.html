@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de Controle de Tarefas e Projetos - Projeto acadêmico UniFil">
+  <meta name="author" content="João Gabriel Pereira Nascimento Feitosa da Silva">
+  <title>Sistema de Controle de Tarefas e Projetos | UniFil</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #3B82F6;
+      --primary-dark: #2563EB;
+      --secondary: #64748B;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text: #1E293B;
+      --text-light: #64748B;
+      --border: #E2E8F0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      padding: 3rem 0;
+      text-align: center;
+      color: white;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    .hero {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      margin: 2rem auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 900px;
+    }
+
+    .hero h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-size: 2rem;
+    }
+
+    .hero p {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59,130,246,0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .feature {
+      background: var(--bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .feature h3 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feature p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    .tech-stack {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 900px;
+    }
+
+    .tech-stack h2 {
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .tech-item {
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .info-section {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 900px;
+    }
+
+    .info-section h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .info-section p, .info-section ul {
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .info-section ul {
+      padding-left: 2rem;
+    }
+
+    .info-section li {
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: white;
+      opacity: 0.9;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      background: var(--success);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .hero {
+        padding: 2rem;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>📋 Sistema de Controle de Tarefas e Projetos</h1>
+      <p>Gerenciamento visual de projetos com quadro Kanban</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>Sobre o Projeto <span class="badge">UniFil 2026</span></h2>
+      <p>
+        Sistema web desenvolvido como projeto acadêmico da disciplina <strong>Projeto e Desenvolvimento de Sistemas I</strong> 
+        do curso de Engenharia de Software da Universidade Filadélfia (UniFil).
+      </p>
+      <p>
+        Inspirado em ferramentas como Trello, o sistema oferece uma interface intuitiva para gerenciamento de projetos 
+        e tarefas através de quadros Kanban, facilitando a organização e o acompanhamento visual do progresso das atividades.
+      </p>
+
+      <div class="buttons">
+        <a href="https://github.com/joaogpnfs/tarefas-gestor" class="btn btn-primary" target="_blank">
+          📦 Ver no GitHub
+        </a>
+        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/documentacao/documentacao.md" class="btn btn-secondary" target="_blank">
+          📚 Documentação Técnica
+        </a>
+        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/README.md" class="btn btn-secondary" target="_blank">
+          📖 README
+        </a>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <h3>📁 Gestão de Projetos</h3>
+          <p>CRUD completo com personalização de cores e estatísticas detalhadas.</p>
+        </div>
+        <div class="feature">
+          <h3>✅ Quadro Kanban</h3>
+          <p>Visualização de tarefas em três colunas: A fazer, Em andamento e Concluído.</p>
+        </div>
+        <div class="feature">
+          <h3>🏷️ Prioridades</h3>
+          <p>Sistema de prioridades com código de cores (Baixa, Média, Alta).</p>
+        </div>
+        <div class="feature">
+          <h3>👥 Gerenciamento de Equipe</h3>
+          <p>Cadastro de membros com atribuição de responsabilidades.</p>
+        </div>
+        <div class="feature">
+          <h3>🔍 Filtros Avançados</h3>
+          <p>Filtre tarefas por prioridade, responsável e status.</p>
+        </div>
+        <div class="feature">
+          <h3>📊 Dashboard</h3>
+          <p>Estatísticas gerais e identificação de tarefas atrasadas.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tech-stack">
+      <h2>🛠️ Tecnologias Utilizadas</h2>
+      <div class="tech-grid">
+        <div class="tech-item">Node.js</div>
+        <div class="tech-item">Express</div>
+        <div class="tech-item">SQLite</div>
+        <div class="tech-item">HTML5</div>
+        <div class="tech-item">CSS3</div>
+        <div class="tech-item">JavaScript ES6+</div>
+        <div class="tech-item">Mocha + Chai</div>
+        <div class="tech-item">REST API</div>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <h3>📋 Funcionalidades Principais</h3>
+      <ul>
+        <li><strong>Projetos:</strong> Criar, editar, visualizar e excluir projetos com cores personalizadas</li>
+        <li><strong>Tarefas:</strong> CRUD completo com título, descrição, status, prioridade, responsável e data de entrega</li>
+        <li><strong>Membros:</strong> Gerenciamento de equipe com validação de email e verificação de duplicidade</li>
+        <li><strong>Kanban:</strong> Visualização visual organizada por status das tarefas</li>
+        <li><strong>Filtros:</strong> Filtragem por prioridade, responsável e status</li>
+        <li><strong>Dashboard:</strong> Estatísticas gerais e lista de tarefas atrasadas</li>
+        <li><strong>Interface Responsiva:</strong> Design adaptável para desktop e mobile</li>
+        <li><strong>API REST:</strong> Endpoints completos para todas as operações</li>
+      </ul>
+    </section>
+
+    <section class="info-section">
+      <h3>🚀 Como Executar</h3>
+      <p>Clone o repositório e instale as dependências:</p>
+      <pre style="background: var(--bg); padding: 1rem; border-radius: 8px; overflow-x: auto;"><code>git clone https://github.com/joaogpnfs/tarefas-gestor.git
+cd tarefas-gestor
+npm install
+npm run seed  # Popular com dados de exemplo
+npm start     # Iniciar servidor na porta 4321</code></pre>
+      <p>Acesse <code>http://localhost:4321</code> no navegador.</p>
+    </section>
+
+    <section class="info-section">
+      <h3>🧪 Testes Automatizados</h3>
+      <p>O projeto inclui testes automatizados completos da API REST:</p>
+      <pre style="background: var(--bg); padding: 1rem; border-radius: 8px;"><code>npm test</code></pre>
+      <p>Cobertura de testes:</p>
+      <ul>
+        <li>Todas as operações CRUD (Create, Read, Update, Delete)</li>
+        <li>Validações de dados obrigatórios e formatos</li>
+        <li>Regras de negócio (status, prioridades, unicidade)</li>
+        <li>Filtros e consultas especializadas</li>
+        <li>Estatísticas e agregações do dashboard</li>
+      </ul>
+    </section>
+
+    <section class="info-section">
+      <h3>👨‍💻 Desenvolvedor</h3>
+      <p><strong>Nome:</strong> João Gabriel Pereira Nascimento Feitosa da Silva</p>
+      <p><strong>RA:</strong> 263466036</p>
+      <p><strong>Instituição:</strong> Universidade Filadélfia (UniFil)</p>
+      <p><strong>Curso:</strong> Engenharia de Software</p>
+      <p><strong>Disciplina:</strong> Projeto e Desenvolvimento de Sistemas I</p>
+      <p><strong>Ano:</strong> 2026</p>
+      <p><strong>Email:</strong> jgpnfeitosa57@gmail.com</p>
+    </section>
+
+    <section class="info-section">
+      <h3>📄 Documentação</h3>
+      <p>A documentação completa do projeto inclui:</p>
+      <ul>
+        <li>Requisitos funcionais e não funcionais</li>
+        <li>Regras de negócio</li>
+        <li>Casos de uso com diagramas</li>
+        <li>Diagrama de classes</li>
+        <li>Modelo Entidade-Relacionamento (MER)</li>
+        <li>Arquitetura do sistema</li>
+        <li>Análise de falhas e riscos (FMEA)</li>
+        <li>Plano de testes</li>
+        <li>Cronograma de desenvolvimento</li>
+        <li>Roteiro para vídeo de defesa</li>
+      </ul>
+      <p>
+        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/documentacao/documentacao.md" 
+           style="color: var(--primary); font-weight: 600;">
+          → Acessar Documentação Completa
+        </a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 João Gabriel Pereira Nascimento Feitosa da Silva | Universidade Filadélfia (UniFil)</p>
+      <p style="margin-top: 0.5rem;">
+        <a href="https://github.com/joaogpnfs/tarefas-gestor" 
+           style="color: white; text-decoration: none; opacity: 0.9;">
+          GitHub
+        </a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
