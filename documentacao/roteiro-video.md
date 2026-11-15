@@ -1,321 +1,160 @@
-# Roteiro para Vídeo de Defesa do Projeto
+# Roteiro do Vídeo de Defesa – Taskora
 
-**Projeto:** Sistema de Controle de Tarefas e Projetos
+**Aluno:** João Gabriel Pereira Nascimento Feitosa da Silva – RA 263466036
+**Curso:** Engenharia de Software – UniFil
+**Disciplinas:** Projeto e Desenvolvimento de Sistemas I e II
+**Duração máxima:** 10 minutos (meta: 8 a 9 minutos)
 
-**Aluno:** João Gabriel Pereira Nascimento Feitosa da Silva
-
-**RA:** 263466036
-
-**Disciplina:** Projeto e Desenvolvimento de Sistemas I
-
-**Duração Total:** 6-9 minutos
+Este roteiro é um guia. Grave com a sua voz e fale com as suas palavras: as falas sugeridas servem só de apoio, não precisam ser lidas ao pé da letra.
 
 ---
 
-## Estrutura do Vídeo
+## Preparação (antes de gravar)
 
-### 1. Introdução (1 minuto)
+1. Rode o projeto do zero para garantir que está tudo funcionando:
+   ```bash
+   npm install
+   cd web && npm install && npm run build && cd ..
+   npm run build
+   npm run seed
+   npm start
+   ```
+2. Abra **http://localhost:4321** no navegador, no modo claro, com zoom em 100%.
+3. Deixe abertos o VS Code (com a pasta do projeto) e um terminal na raiz do projeto.
+4. Feche notificações, abas pessoais e programas que não serão usados.
+5. Use um gravador de tela com microfone (OBS Studio, ou Cmd + Shift + 5 no Mac) em 1080p.
+6. Faça um teste de 20 segundos para conferir o áudio.
 
-**Tempo:** 00:00 - 01:00
-
-**Conteúdo:**
-- Apresentação pessoal
-- Nome do projeto: "Sistema de Controle de Tarefas e Projetos"
-- Contexto: projeto desenvolvido para a disciplina de Projeto e Desenvolvimento de Sistemas I
-- Objetivo geral: criar um sistema web de gestão de projetos e tarefas com visualização Kanban
-
-**Roteiro sugerido:**
-
-> "Olá, meu nome é João Gabriel Pereira Nascimento Feitosa da Silva, RA 263466036, estudante de Engenharia de Software na UniFil. Hoje vou apresentar o Sistema de Controle de Tarefas e Projetos, desenvolvido como trabalho prático da disciplina Projeto e Desenvolvimento de Sistemas I.
->
-> O objetivo deste sistema é facilitar o gerenciamento de projetos e tarefas através de uma interface visual intuitiva, inspirada em ferramentas como o Trello, utilizando quadros Kanban para organização e acompanhamento do progresso das atividades."
-
----
-
-### 2. Problema e Justificativa (1 minuto)
-
-**Tempo:** 01:00 - 02:00
-
-**Conteúdo:**
-- Problema: necessidade de organização e acompanhamento visual de tarefas
-- Justificativa: aprendizado prático de desenvolvimento web full-stack
-- Benefícios: melhor produtividade, comunicação e visibilidade do progresso
-
-**Roteiro sugerido:**
-
-> "A gestão eficiente de projetos é fundamental para equipes de desenvolvimento. Este projeto justifica-se pela necessidade de aplicar na prática conceitos de engenharia de software, incluindo arquitetura de sistemas, modelagem de dados, desenvolvimento de APIs e criação de interfaces de usuário responsivas.
->
-> O sistema permite que equipes organizem suas atividades, acompanhem o progresso visualmente e identifiquem rapidamente gargalos e tarefas atrasadas."
+> Dica: rode `npm run seed` de novo logo antes de gravar, para os dados de demonstração estarem completos e as datas atualizadas.
 
 ---
 
-### 3. Arquitetura e Tecnologias (1-1.5 minutos)
+## Estrutura e tempos
 
-**Tempo:** 02:00 - 03:30
-
-**Conteúdo:**
-- Arquitetura em camadas (apresentação, aplicação, negócio, dados)
-- Tecnologias backend: Node.js, Express, SQLite (better-sqlite3)
-- Tecnologias frontend: HTML5, CSS3, JavaScript
-- API RESTful
-- Padrões: MVC, Repository Pattern
-
-**Roteiro sugerido:**
-
-> "O sistema foi desenvolvido seguindo uma arquitetura em camadas com separação clara de responsabilidades.
->
-> No backend, utilizei Node.js com Express para criar uma API REST, e SQLite como banco de dados. A escolha do SQLite facilita a execução do projeto, pois não requer servidor de banco de dados separado.
->
-> No frontend, utilizei HTML5, CSS3 e JavaScript puro, sem frameworks, para focar nos fundamentos e manter a simplicidade.
->
-> A comunicação entre frontend e backend ocorre através de uma API RESTful, seguindo as melhores práticas de desenvolvimento web. O código está organizado seguindo o padrão MVC, com Models para lógica de negócio, Views para apresentação e Controllers nas rotas."
-
-**Tela a mostrar:**
-- Diagrama de arquitetura (pode ser mostrado do documento)
-- Estrutura de pastas do projeto no VS Code
+| Bloco | Tema | Tempo |
+|-------|------|-------|
+| 1 | Apresentação e problema | 0:00 – 0:45 |
+| 2 | Arquitetura, stack e banco de dados | 0:45 – 2:30 |
+| 3 | Demonstração da interface | 2:30 – 6:30 |
+| 4 | Código: rota, modelo e arrastar e soltar | 6:30 – 8:15 |
+| 5 | Testes automatizados | 8:15 – 9:00 |
+| 6 | Conclusão | 9:00 – 9:40 |
 
 ---
 
-### 4. Modelagem de Dados (1 minuto)
+## Bloco 1 – Apresentação e problema (0:00 – 0:45)
 
-**Tempo:** 03:30 - 04:30
+**Na tela:** tela inicial do Taskora.
 
-**Conteúdo:**
-- Três entidades principais: Projetos, Tarefas, Membros
-- Relacionamentos: Projeto 1:N Tarefas, Membro 1:N Tarefas
-- Mostrar diagrama ER
-
-**Roteiro sugerido:**
-
-> "O banco de dados foi modelado com três entidades principais: Projetos, Tarefas e Membros.
->
-> Cada projeto pode ter múltiplas tarefas. Cada tarefa pertence obrigatoriamente a um projeto e pode ter um membro responsável. Implementei integridade referencial com cascade delete, de forma que ao excluir um projeto, suas tarefas são automaticamente removidas.
->
-> As tarefas possuem atributos como título, descrição, status (A fazer, Em andamento ou Concluído), prioridade (Baixa, Média ou Alta), responsável e data de entrega. Todas as validações são feitas tanto no backend quanto no banco de dados."
-
-**Tela a mostrar:**
-- Diagrama ER do documento
-- Schema do banco de dados (schema.js)
+**Fala sugerida:**
+"Olá, meu nome é João Gabriel Pereira Nascimento Feitosa da Silva, RA 263466036, do curso de Engenharia de Software da UniFil. Este é o Taskora, o meu projeto para as disciplinas de Projeto e Desenvolvimento de Sistemas I e II. É um sistema de controle de tarefas e projetos. A ideia surgiu porque equipes pequenas costumam organizar tarefas em planilhas ou grupos de mensagem, e fica difícil saber quem está fazendo o quê e o que está atrasado. Por isso eu me inspirei em duas ferramentas: o Notion, nas páginas de projeto, e o Trello, no quadro Kanban."
 
 ---
 
-### 5. Demonstração Prática - CRUD (3-4 minutos)
+## Bloco 2 – Arquitetura, stack e banco de dados (0:45 – 2:30)
 
-**Tempo:** 04:30 - 08:00
+**Na tela:** documentação (PDF) no diagrama de arquitetura e depois no modelo ER. Se preferir, mostre a árvore de pastas no VS Code.
 
-Este é o core do vídeo. Demonstre todas as funcionalidades principais.
+**Pontos para falar:**
+- Arquitetura cliente-servidor em camadas: o frontend em React chama a API REST, a API tem rotas, modelos e a camada de acesso ao banco.
+- **Backend:** Node.js, Express 5 e TypeScript, com banco **SQLite** pelo `better-sqlite3`.
+- **Frontend:** React 19 com TypeScript e Vite, Tailwind CSS, componentes no padrão shadcn/ui, ícones lucide-react, gráficos com recharts, arrastar e soltar com @dnd-kit e notificações com sonner.
+- No modelo ER, mostrar as três tabelas: **projetos**, **tarefas** e **membros**.
+- Um projeto tem muitas tarefas, com **ON DELETE CASCADE**. Um membro pode ser responsável por várias tarefas, com **ON DELETE SET NULL**.
+- Status e prioridade têm **CHECK** no banco, e o e-mail do membro é **UNIQUE**.
+- As colunas novas (emoji, capa, etiquetas, checklist) são adicionadas por uma **migração automática** em `schema.ts`, então um banco antigo continua funcionando.
 
-#### 5.1 Dashboard (30 segundos)
-
-**Roteiro sugerido:**
-
-> "Vou iniciar a demonstração pelo dashboard, que oferece uma visão geral do sistema. Aqui vemos estatísticas gerais: total de projetos, tarefas, membros e tarefas atrasadas. Logo abaixo, temos contadores por status e uma lista de tarefas que estão atrasadas."
-
-**Ações:**
-- Abrir o navegador em http://localhost:4321
-- Mostrar o dashboard com os dados de exemplo
-
----
-
-#### 5.2 CRUD de Projetos (45 segundos)
-
-**Roteiro sugerido:**
-
-> "Agora vou demonstrar o gerenciamento de projetos. Aqui temos a listagem de todos os projetos cadastrados. Vou criar um novo projeto..."
->
-> [Criar projeto]
->
-> "Preencho o nome, descrição e posso personalizar a cor que aparecerá na interface. Ao salvar, o projeto é adicionado à lista. Também posso editar um projeto existente alterando suas informações, e deletar projetos que não são mais necessários."
-
-**Ações:**
-1. Navegar para página de Projetos
-2. Clicar em "Novo Projeto"
-3. Preencher formulário (ex: "Novo Projeto Demo", descrição, escolher cor)
-4. Salvar e mostrar projeto criado
-5. Abrir um projeto para demonstrar edição (opcional)
+**Fala de apoio:** "Eu escolhi o SQLite porque ele não precisa de servidor instalado, então qualquer pessoa consegue rodar o projeto, mas ele continua sendo um banco relacional de verdade, com chave estrangeira e restrições."
 
 ---
 
-#### 5.3 CRUD de Membros (45 segundos)
+## Bloco 3 – Demonstração da interface (2:30 – 6:30)
 
-**Roteiro sugerido:**
+### 3.1. Tela inicial (30 s)
+- Mostre a saudação, os quatro indicadores, o gráfico de rosca por status e o de barras por prioridade.
+- Mostre o progresso dos projetos, "Minhas tarefas" (Hoje, Atrasadas, Próximas) e os prazos da semana.
 
-> "Na seção de membros, gerencio a equipe que trabalhará nos projetos. Vou adicionar um novo membro..."
->
-> [Criar membro]
->
-> "Informo nome, email e cargo. O sistema valida o formato do email e impede cadastros duplicados. Cada membro pode ser atribuído como responsável por tarefas. Também é possível editar informações ou remover membros."
+### 3.2. Criar um projeto (40 s)
+- Clique em **Novo projeto** na barra lateral.
+- Preencha o nome (por exemplo, "Projeto da Defesa"), escolha um emoji, uma capa e um prazo, e crie.
+- Mostre que ele aparece na barra lateral e abre a página com capa e ícone.
+- Edite o título ou a descrição direto na página para mostrar o **Update**.
 
-**Ações:**
-1. Navegar para página de Membros
-2. Clicar em "Novo Membro"
-3. Preencher formulário (nome, email válido, cargo)
-4. Salvar e mostrar membro criado
-5. Opcionalmente, tentar criar com email duplicado para mostrar validação
+### 3.3. Criar e mover cartões (1 min 10 s)
+- Abra um projeto com dados, como o **Portal Acadêmico**, na visualização **Quadro**.
+- Clique em **Adicionar cartão** na lista "A fazer", preencha título, prioridade, responsável, data de entrega e etiquetas, e crie (**Create**).
+- **Arraste o cartão** para "Em andamento" e depois para "Concluído". Comente que o status é salvo no banco na hora.
+- Recarregue a página (F5) para provar que a mudança ficou gravada.
 
----
+### 3.4. Detalhe do cartão (40 s)
+- Clique em um cartão para abrir o detalhe.
+- Mostre responsável, etiquetas (adicione uma), data de entrega, descrição e a barra do checklist (clique em "Adicionar item" e "Marcar concluído").
+- Use **Mover** e **Prioridade** na coluna de ações.
+- No final, **exclua** o cartão de teste (**Delete**) e mostre a notificação.
 
-#### 5.4 CRUD de Tarefas e Kanban (1.5-2 minutos)
+### 3.5. Outras visualizações (40 s)
+- Troque para **Tabela**, **Lista** e **Calendário** no mesmo projeto.
+- Vá em **Todas as tarefas** e use os filtros de prioridade, responsável e projeto.
+- Aperte **Ctrl + K** (ou Cmd + K) e busque uma tarefa.
 
-**Roteiro sugerido:**
-
-> "Agora a funcionalidade principal: o gerenciamento de tarefas com quadro Kanban. Vou abrir um projeto..."
->
-> [Abrir projeto]
->
-> "Aqui vemos o quadro Kanban dividido em três colunas: A fazer, Em andamento e Concluído. Cada card de tarefa exibe título, prioridade com código de cores, responsável e data de entrega."
->
-> "Vou criar uma nova tarefa..."
->
-> [Criar tarefa]
->
-> "Preencho título, descrição, seleciono o status inicial, defino a prioridade, atribuo um responsável e defino data de entrega. Ao salvar, a tarefa aparece na coluna correspondente ao seu status."
->
-> "O sistema oferece filtros que permitem visualizar apenas tarefas de determinada prioridade, responsável ou status. Isso facilita muito quando temos muitas tarefas."
->
-> [Demonstrar filtros]
->
-> "Posso clicar em uma tarefa para editá-la. Por exemplo, vou mudar o status desta tarefa de 'A fazer' para 'Em andamento'..."
->
-> [Editar tarefa, mudar status]
->
-> "E ela automaticamente se move para a coluna correspondente. Esta visualização facilita muito o acompanhamento do progresso do projeto."
-
-**Ações:**
-1. Clicar em um projeto para abrir o Kanban
-2. Mostrar as três colunas com tarefas
-3. Criar nova tarefa com todos os campos preenchidos
-4. Demonstrar filtros (escolher um filtro de prioridade, depois limpar)
-5. Clicar em uma tarefa e editar seu status
-6. Mostrar que a tarefa mudou de coluna
+### 3.6. Membros e modo escuro (20 s)
+- Abra **Membros**, mostre a galeria e cadastre um membro rápido. Se quiser, mostre o erro de e-mail inválido.
+- Clique no ícone da lua no canto superior direito para mostrar o **modo escuro**.
 
 ---
 
-### 6. Testes Automatizados (30-45 segundos)
+## Bloco 4 – Código (6:30 – 8:15)
 
-**Tempo:** 08:00 - 08:45
+**Na tela:** VS Code. Aumente a fonte do editor para ficar legível no vídeo.
 
-**Conteúdo:**
-- Demonstrar execução dos testes
-- Mostrar que todos passam
-- Explicar cobertura (CRUD completo, validações)
+1. **`src/server.ts`** (20 s): mostre o Express registrando as rotas `/api/projetos`, `/api/tarefas`, `/api/membros` e `/api/dashboard`, e servindo o `web/dist` do frontend.
+2. **`src/database/schema.ts`** (25 s): mostre o `CREATE TABLE` das tarefas com as chaves estrangeiras e os CHECKs, e a função `migrateOptionalColumns`.
+3. **`src/models/Tarefa.ts`** (25 s): mostre a validação do título no `create` e o `update` parcial, que monta o SQL só com os campos enviados e usa parâmetros `?` (evita SQL injection).
+4. **`web/src/components/views/BoardView.tsx`** (20 s): mostre o `DndContext` do @dnd-kit e o `onDragEnd`, que descobre a lista de destino e chama `updateTarefa` com o novo status.
+5. **`web/src/lib/data.tsx`** (15 s): mostre o `updateTarefa` com atualização otimista: a tela muda na hora e, se a API der erro, volta ao estado anterior e mostra uma notificação.
 
-**Roteiro sugerido:**
-
-> "Um aspecto importante do projeto é a qualidade de código. Implementei testes automatizados para toda a API REST, cobrindo todas as operações CRUD, validações de dados e regras de negócio.
->
-> Vou executar os testes..."
->
-> [Executar npm test]
->
-> "Como podem ver, todos os testes passaram com sucesso. Isso garante que as funcionalidades estão funcionando conforme esperado e facilita futuras manutenções."
-
-**Ações:**
-1. Abrir terminal
-2. Executar `npm test`
-3. Mostrar resultado dos testes passando
-4. Comentar brevemente sobre os casos de teste
+**Fala de apoio:** "Essa é a sequência que está no diagrama de sequência da documentação: o quadro chama o estado global, que chama a API, que chama o modelo, que atualiza o banco."
 
 ---
 
-### 7. Conclusão (30-45 segundos)
+## Bloco 5 – Testes automatizados (8:15 – 9:00)
 
-**Tempo:** 08:45 - 09:30
+**Na tela:** terminal e `test/api.test.ts`.
 
-**Conteúdo:**
-- Resumo das funcionalidades implementadas
-- Aprendizados obtidos
-- Agradecimento
-
-**Roteiro sugerido:**
-
-> "Para concluir, este projeto implementou com sucesso um sistema completo de controle de tarefas e projetos, com:
->
-> - CRUD completo para projetos, tarefas e membros
-> - Visualização em quadro Kanban com três status
-> - Sistema de filtros por prioridade, responsável e status
-> - Dashboard com estatísticas e identificação de tarefas atrasadas
-> - API REST bem estruturada
-> - Interface responsiva e intuitiva
-> - Testes automatizados garantindo qualidade
->
-> Este trabalho proporcionou grande aprendizado sobre desenvolvimento web full-stack, arquitetura de software, modelagem de dados e boas práticas de programação.
->
-> O código-fonte completo, documentação e instruções de instalação estão disponíveis no GitHub no repositório joaogpnfs/tarefas-gestor.
->
-> Agradeço a atenção e fico à disposição para perguntas."
+- Mostre rapidamente o arquivo de testes e os grupos: Projetos, Membros, Tarefas, Campos opcionais e Dashboard.
+- Rode:
+  ```bash
+  npm test
+  ```
+- Mostre o resultado **28 passing**.
+- Explique que os testes usam um banco separado (`database-test.db`), então não mexem nos dados reais, e que as mensagens de erro no console são dos testes que enviam dados inválidos de propósito.
 
 ---
 
-## Dicas de Gravação
+## Bloco 6 – Conclusão (9:00 – 9:40)
 
-### Antes de Gravar
+**Na tela:** repositório no GitHub (https://github.com/joaogpnfs/tarefas-gestor) mostrando o histórico de commits, e depois a página https://joaogpnfs.github.io/tarefas-gestor/.
 
-- [ ] Executar `npm run seed` para popular com dados de exemplo
-- [ ] Iniciar o servidor com `npm start`
-- [ ] Testar todas as funcionalidades que serão demonstradas
-- [ ] Limpar histórico e abas desnecessárias do navegador
-- [ ] Aumentar zoom do navegador para melhor visualização
-- [ ] Preparar janelas: navegador, VS Code, terminal
-- [ ] Testar microfone e qualidade de áudio
-
-### Durante a Gravação
-
-- [ ] Falar de forma clara e pausada
-- [ ] Manter ritmo constante (não muito rápido nem lento)
-- [ ] Mostrar cursor do mouse para facilitar acompanhamento
-- [ ] Evitar longos silêncios
-- [ ] Se errar, pode pausar e recomeçar a seção
-- [ ] Manter energia e entusiasmo na voz
-- [ ] Não ultrapassar 9 minutos
-
-### Após a Gravação
-
-- [ ] Revisar o vídeo completo
-- [ ] Verificar se áudio está claro
-- [ ] Verificar se todas as funcionalidades foram demonstradas
-- [ ] Adicionar vinheta com dados do projeto (opcional)
-- [ ] Exportar em formato compatível (MP4, 1080p recomendado)
+**Fala sugerida (adapte com a sua opinião):**
+"Para concluir: o Taskora tem CRUD completo de projetos, tarefas e membros, banco relacional, quatro visualizações, arrastar e soltar e 28 testes automatizados. O projeto começou em JavaScript puro, versão que ficou guardada na tag v1.0-vanilla, e depois eu migrei tudo para TypeScript e React. O que eu mais aprendi foi [fale aqui, com as suas palavras, o que foi mais importante para você]. Como próximos passos, eu colocaria autenticação de usuários e notificações de prazo. Obrigado!"
 
 ---
 
-## Estrutura de Pastas para Referência
+## Depois de gravar
 
-Durante a explicação da arquitetura, pode ser útil mostrar:
+1. Assista ao vídeo inteiro e confira o áudio e o tempo (até 10 minutos).
+2. Envie ao YouTube como **Não listado** e copie o link.
+3. Na entrega do Canvas, coloque o link do repositório, o link do commit ou da tag e o link do vídeo.
 
-```
-tarefas-gestor/
-├── src/
-│   ├── database/        # Banco de dados
-│   ├── models/          # Lógica de negócio
-│   ├── routes/          # API REST
-│   ├── server.js        # Servidor Express
-│   └── seed.js          # Dados de exemplo
-├── public/              # Frontend
-│   ├── index.html
-│   ├── css/
-│   └── js/
-├── test/                # Testes automatizados
-├── docs/                # Landing page
-└── documentacao/        # Documentação técnica
-```
+## Checklist
 
----
-
-## Checklist Final
-
-Antes de gravar, confirme que:
-
-- [ ] Banco de dados populado com dados de exemplo (`npm run seed`)
-- [ ] Servidor rodando (`npm start`)
-- [ ] Todos os CRUDs funcionam
-- [ ] Filtros funcionam
-- [ ] Dashboard mostra estatísticas corretas
-- [ ] Testes passam (`npm test`)
-- [ ] Navegador configurado (zoom, abas limpas)
-- [ ] Roteiro revisado
-- [ ] Tempo cronometrado (6-9 minutos)
-
----
-
-**Boa sorte na gravação! 🎬**
+- [ ] Projeto roda do zero com os comandos da preparação
+- [ ] `npm run seed` executado antes de gravar
+- [ ] Nome e RA falados no começo
+- [ ] Arquitetura, stack e banco explicados
+- [ ] Create, Read, Update e Delete demonstrados na interface
+- [ ] Arrastar e soltar demonstrado e conferido após recarregar a página
+- [ ] Quadro, tabela, lista, calendário e modo escuro mostrados
+- [ ] Código do backend e do arrastar e soltar mostrado
+- [ ] `npm test` com 28 testes passando
+- [ ] Vídeo com até 10 minutos, enviado como não listado
