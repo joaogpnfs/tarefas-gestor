@@ -1,182 +1,259 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Controle de Tarefas e Projetos</title>
+  <title>Taskora - Controle de Tarefas e Projetos</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="container">
-      <h1 class="logo">📋 Controle de Projetos</h1>
-      <div class="nav-links">
-        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
-        <button class="nav-btn" data-page="projetos">Projetos</button>
-        <button class="nav-btn" data-page="membros">Membros</button>
-      </div>
-    </div>
-  </nav>
-
-  <main class="container main-content">
-    <!-- Dashboard Page -->
-    <div id="dashboard-page" class="page active">
-      <div class="page-header">
-        <h2>Dashboard</h2>
-        <p class="subtitle">Visão geral do sistema</p>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">T</div>
+          <span class="logo-text">Taskora</span>
+        </div>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📁</div>
-          <div class="stat-info">
-            <h3 id="stat-projetos">0</h3>
-            <p>Projetos</p>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-item active" data-page="dashboard">
+            <svg class="nav-icon"><use href="#icon-home"/></svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-page="projetos">
+            <svg class="nav-icon"><use href="#icon-grid"/></svg>
+            <span>Projetos</span>
+          </div>
+          <div class="nav-item" data-page="membros">
+            <svg class="nav-icon"><use href="#icon-users"/></svg>
+            <span>Membros</span>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-info">
-            <h3 id="stat-tarefas">0</h3>
-            <p>Tarefas Totais</p>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">👥</div>
-          <div class="stat-info">
-            <h3 id="stat-membros">0</h3>
-            <p>Membros</p>
-          </div>
-        </div>
-        <div class="stat-card warning">
-          <div class="stat-icon">⚠️</div>
-          <div class="stat-info">
-            <h3 id="stat-atrasadas">0</h3>
-            <p>Tarefas Atrasadas</p>
-          </div>
-        </div>
-      </div>
+      </nav>
 
-      <div class="status-grid">
-        <div class="status-card status-todo">
-          <h3>A Fazer</h3>
-          <p class="status-count" id="count-a-fazer">0</p>
-        </div>
-        <div class="status-card status-doing">
-          <h3>Em Andamento</h3>
-          <p class="status-count" id="count-em-andamento">0</p>
-        </div>
-        <div class="status-card status-done">
-          <h3>Concluído</h3>
-          <p class="status-count" id="count-concluido">0</p>
-        </div>
+      <div class="sidebar-footer">
+        <button class="theme-toggle" onclick="app.toggleTheme()">
+          <svg width="16" height="16"><use href="#icon-sun"/></svg>
+          <span id="theme-label">Modo Claro</span>
+        </button>
       </div>
+    </aside>
 
-      <div class="card">
-        <h3>Tarefas Atrasadas</h3>
-        <div id="tarefas-atrasadas-list" class="tarefas-atrasadas-list">
-          <p class="empty-state">Nenhuma tarefa atrasada 🎉</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Projetos Page -->
-    <div id="projetos-page" class="page">
-      <div class="page-header">
-        <h2>Projetos</h2>
-        <button class="btn btn-primary" onclick="app.showProjetoModal()">+ Novo Projeto</button>
-      </div>
-
-      <div id="projetos-list" class="projetos-grid">
-        <p class="empty-state">Nenhum projeto cadastrado</p>
-      </div>
-
-      <!-- Modal Ver Projeto -->
-      <div id="view-projeto-modal" class="modal">
-        <div class="modal-content modal-large">
-          <div class="modal-header">
-            <h2 id="view-projeto-nome"></h2>
-            <button class="close-btn" onclick="app.closeModal('view-projeto-modal')">&times;</button>
-          </div>
-          <div class="modal-body">
-            <p id="view-projeto-descricao"></p>
-            
-            <div class="projeto-actions">
-              <button class="btn btn-secondary" onclick="app.editProjeto()">✏️ Editar</button>
-              <button class="btn btn-primary" onclick="app.showTarefaModal()">+ Nova Tarefa</button>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Page -->
+      <div id="dashboard-page" class="page active">
+        <div class="content-header">
+          <div class="header-title">
+            <div>
+              <h1>Dashboard</h1>
+              <p class="header-subtitle">Visão geral do sistema</p>
             </div>
+          </div>
+        </div>
 
-            <div class="filters">
-              <select id="filter-status" class="filter-select" onchange="app.loadTarefas()">
-                <option value="">Todos os Status</option>
-                <option value="A fazer">A fazer</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Concluído">Concluído</option>
-              </select>
-              <select id="filter-prioridade" class="filter-select" onchange="app.loadTarefas()">
-                <option value="">Todas as Prioridades</option>
-                <option value="Baixa">Baixa</option>
-                <option value="Média">Média</option>
-                <option value="Alta">Alta</option>
-              </select>
-              <select id="filter-responsavel" class="filter-select" onchange="app.loadTarefas()">
-                <option value="">Todos os Responsáveis</option>
-              </select>
+        <div class="content-body">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon primary">
+                  <svg width="20" height="20"><use href="#icon-grid"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-projetos">0</div>
+              <div class="stat-label">Projetos</div>
             </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon success">
+                  <svg width="20" height="20"><use href="#icon-check"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-tarefas">0</div>
+              <div class="stat-label">Tarefas Totais</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon primary">
+                  <svg width="20" height="20"><use href="#icon-users"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-membros">0</div>
+              <div class="stat-label">Membros</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-header">
+                <div class="stat-icon danger">
+                  <svg width="20" height="20"><use href="#icon-alert"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="stat-atrasadas">0</div>
+              <div class="stat-label">Tarefas Atrasadas</div>
+            </div>
+          </div>
 
-            <div id="kanban-board" class="kanban-board">
-              <div class="kanban-column">
-                <h3 class="kanban-header status-todo">A Fazer</h3>
-                <div id="kanban-a-fazer" class="kanban-tasks"></div>
-              </div>
-              <div class="kanban-column">
-                <h3 class="kanban-header status-doing">Em Andamento</h3>
-                <div id="kanban-em-andamento" class="kanban-tasks"></div>
-              </div>
-              <div class="kanban-column">
-                <h3 class="kanban-header status-done">Concluído</h3>
-                <div id="kanban-concluido" class="kanban-tasks"></div>
-              </div>
+          <div class="status-pills">
+            <div class="status-pill todo">
+              <h3>A Fazer</h3>
+              <div class="status-count" id="count-a-fazer">0</div>
+            </div>
+            <div class="status-pill doing">
+              <h3>Em Andamento</h3>
+              <div class="status-count" id="count-em-andamento">0</div>
+            </div>
+            <div class="status-pill done">
+              <h3>Concluído</h3>
+              <div class="status-count" id="count-concluido">0</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Tarefas Atrasadas</h3>
+            </div>
+            <div class="card-body">
+              <div id="tarefas-atrasadas-list"></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Membros Page -->
-    <div id="membros-page" class="page">
-      <div class="page-header">
-        <h2>Membros da Equipe</h2>
-        <button class="btn btn-primary" onclick="app.showMembroModal()">+ Novo Membro</button>
+      <!-- Projetos Page -->
+      <div id="projetos-page" class="page">
+        <div class="content-header">
+          <div class="header-title">
+            <div>
+              <h1>Projetos</h1>
+              <p class="header-subtitle">Gerencie seus projetos</p>
+            </div>
+            <button class="btn btn-primary" onclick="app.showProjetoModal()">
+              <svg width="16" height="16"><use href="#icon-plus"/></svg>
+              Novo Projeto
+            </button>
+          </div>
+        </div>
+
+        <div class="content-body">
+          <div id="projetos-list" class="projects-grid"></div>
+        </div>
+
+        <!-- Modal Ver Projeto -->
+        <div id="view-projeto-modal" class="modal">
+          <div class="modal-content modal-large">
+            <div class="modal-header">
+              <h2 id="view-projeto-nome"></h2>
+              <button class="close-btn" onclick="app.closeModal('view-projeto-modal')">
+                <svg width="20" height="20"><use href="#icon-x"/></svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p id="view-projeto-descricao" style="margin-bottom: 24px; color: var(--text-secondary);"></p>
+              
+              <div class="project-actions">
+                <button class="btn btn-secondary" onclick="app.editProjeto()">
+                  <svg width="16" height="16"><use href="#icon-edit"/></svg>
+                  Editar
+                </button>
+                <button class="btn btn-primary" onclick="app.showTarefaModal()">
+                  <svg width="16" height="16"><use href="#icon-plus"/></svg>
+                  Nova Tarefa
+                </button>
+              </div>
+
+              <div class="filters">
+                <select id="filter-status" class="filter-select" onchange="app.loadTarefas()">
+                  <option value="">Todos os Status</option>
+                  <option value="A fazer">A fazer</option>
+                  <option value="Em andamento">Em andamento</option>
+                  <option value="Concluído">Concluído</option>
+                </select>
+                <select id="filter-prioridade" class="filter-select" onchange="app.loadTarefas()">
+                  <option value="">Todas as Prioridades</option>
+                  <option value="Baixa">Baixa</option>
+                  <option value="Média">Média</option>
+                  <option value="Alta">Alta</option>
+                </select>
+                <select id="filter-responsavel" class="filter-select" onchange="app.loadTarefas()">
+                  <option value="">Todos os Responsáveis</option>
+                </select>
+              </div>
+
+              <div id="kanban-board" class="kanban-board">
+                <div class="kanban-column">
+                  <div class="kanban-header todo">
+                    <h3>A Fazer</h3>
+                    <span class="task-count" id="count-todo">0</span>
+                  </div>
+                  <div id="kanban-a-fazer" class="kanban-tasks" data-status="A fazer"></div>
+                </div>
+                <div class="kanban-column">
+                  <div class="kanban-header doing">
+                    <h3>Em Andamento</h3>
+                    <span class="task-count" id="count-doing">0</span>
+                  </div>
+                  <div id="kanban-em-andamento" class="kanban-tasks" data-status="Em andamento"></div>
+                </div>
+                <div class="kanban-column">
+                  <div class="kanban-header done">
+                    <h3>Concluído</h3>
+                    <span class="task-count" id="count-done">0</span>
+                  </div>
+                  <div id="kanban-concluido" class="kanban-tasks" data-status="Concluído"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div id="membros-list" class="membros-grid">
-        <p class="empty-state">Nenhum membro cadastrado</p>
+      <!-- Membros Page -->
+      <div id="membros-page" class="page">
+        <div class="content-header">
+          <div class="header-title">
+            <div>
+              <h1>Membros da Equipe</h1>
+              <p class="header-subtitle">Gerencie os membros do time</p>
+            </div>
+            <button class="btn btn-primary" onclick="app.showMembroModal()">
+              <svg width="16" height="16"><use href="#icon-plus"/></svg>
+              Novo Membro
+            </button>
+          </div>
+        </div>
+
+        <div class="content-body">
+          <div id="membros-list" class="members-grid"></div>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <!-- Modal Projeto -->
   <div id="projeto-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="projeto-modal-title">Novo Projeto</h2>
-        <button class="close-btn" onclick="app.closeModal('projeto-modal')">&times;</button>
+        <button class="close-btn" onclick="app.closeModal('projeto-modal')">
+          <svg width="20" height="20"><use href="#icon-x"/></svg>
+        </button>
       </div>
       <div class="modal-body">
         <form id="projeto-form" onsubmit="app.saveProjeto(event)">
           <input type="hidden" id="projeto-id">
           <div class="form-group">
             <label for="projeto-nome">Nome do Projeto *</label>
-            <input type="text" id="projeto-nome" required>
+            <input type="text" id="projeto-nome" required placeholder="Ex: Sistema de Gestão">
           </div>
           <div class="form-group">
             <label for="projeto-descricao">Descrição</label>
-            <textarea id="projeto-descricao" rows="3"></textarea>
+            <textarea id="projeto-descricao" rows="3" placeholder="Descreva o projeto..."></textarea>
           </div>
           <div class="form-group">
             <label for="projeto-cor">Cor</label>
-            <input type="color" id="projeto-cor" value="#3B82F6">
+            <input type="color" id="projeto-cor" value="#8b5cf6">
           </div>
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" onclick="app.closeModal('projeto-modal')">Cancelar</button>
@@ -192,7 +269,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="tarefa-modal-title">Nova Tarefa</h2>
-        <button class="close-btn" onclick="app.closeModal('tarefa-modal')">&times;</button>
+        <button class="close-btn" onclick="app.closeModal('tarefa-modal')">
+          <svg width="20" height="20"><use href="#icon-x"/></svg>
+        </button>
       </div>
       <div class="modal-body">
         <form id="tarefa-form" onsubmit="app.saveTarefa(event)">
@@ -200,11 +279,11 @@
           <input type="hidden" id="tarefa-projeto-id">
           <div class="form-group">
             <label for="tarefa-titulo">Título *</label>
-            <input type="text" id="tarefa-titulo" required>
+            <input type="text" id="tarefa-titulo" required placeholder="Ex: Implementar autenticação">
           </div>
           <div class="form-group">
             <label for="tarefa-descricao">Descrição</label>
-            <textarea id="tarefa-descricao" rows="3"></textarea>
+            <textarea id="tarefa-descricao" rows="3" placeholder="Descreva a tarefa..."></textarea>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -250,22 +329,24 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="membro-modal-title">Novo Membro</h2>
-        <button class="close-btn" onclick="app.closeModal('membro-modal')">&times;</button>
+        <button class="close-btn" onclick="app.closeModal('membro-modal')">
+          <svg width="20" height="20"><use href="#icon-x"/></svg>
+        </button>
       </div>
       <div class="modal-body">
         <form id="membro-form" onsubmit="app.saveMembro(event)">
           <input type="hidden" id="membro-id">
           <div class="form-group">
             <label for="membro-nome">Nome *</label>
-            <input type="text" id="membro-nome" required>
+            <input type="text" id="membro-nome" required placeholder="Ex: João Silva">
           </div>
           <div class="form-group">
             <label for="membro-email">Email *</label>
-            <input type="email" id="membro-email" required>
+            <input type="email" id="membro-email" required placeholder="joao@exemplo.com">
           </div>
           <div class="form-group">
             <label for="membro-cargo">Cargo</label>
-            <input type="text" id="membro-cargo">
+            <input type="text" id="membro-cargo" placeholder="Ex: Desenvolvedor Full Stack">
           </div>
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" onclick="app.closeModal('membro-modal')">Cancelar</button>
@@ -277,6 +358,98 @@
   </div>
 
   <div id="toast" class="toast"></div>
+
+  <!-- Icons -->
+  <div style="display: none;">
+<!-- SVG Icons -->
+<svg style="display: none;">
+  <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </symbol>
+  
+  <symbol id="icon-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="3" width="7" height="7"/>
+    <rect x="14" y="3" width="7" height="7"/>
+    <rect x="14" y="14" width="7" height="7"/>
+    <rect x="3" y="14" width="7" height="7"/>
+  </symbol>
+  
+  <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </symbol>
+  
+  <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"/>
+    <line x1="5" y1="12" x2="19" y2="12"/>
+  </symbol>
+  
+  <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/>
+    <line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </symbol>
+  
+  <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </symbol>
+  
+  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </symbol>
+  
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <polyline points="12 6 12 12 16 14"/>
+  </symbol>
+  
+  <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </symbol>
+  
+  <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </symbol>
+  
+  <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+    <line x1="12" y1="9" x2="12" y2="13"/>
+    <line x1="12" y1="17" x2="12.01" y2="17"/>
+  </symbol>
+  
+  <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  </symbol>
+  
+  <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+  </symbol>
+  
+  <symbol id="icon-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+  </symbol>
+  
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+</svg>
+  </div>
 
   <script src="/js/app.js"></script>
 </body>
