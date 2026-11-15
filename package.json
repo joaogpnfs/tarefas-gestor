@@ -1,18 +1,27 @@
 {
-  "name": "tmp-310233a51c982ebb",
+  "name": "tarefas-gestor",
   "version": "1.0.0",
-  "description": "This repo was created by a Cursor cloud agent.",
-  "main": "index.js",
+  "description": "Sistema de Controle de Tarefas e Projetos - Projeto acadêmico UniFil",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "test": "mocha test/**/*.test.js --timeout 10000",
+    "seed": "node src/seed.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://origin.cursor.com/git/rafael-almendra/tmp-310233a51c982ebb.git"
+    "url": "https://github.com/joaogpnfs/tarefas-gestor.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "kanban",
+    "task-manager",
+    "project-management",
+    "nodejs",
+    "express",
+    "sqlite"
+  ],
+  "author": "João Gabriel Pereira Nascimento Feitosa da Silva <jgpnfeitosa57@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^13.2.0",
     "cors": "^2.8.6",
