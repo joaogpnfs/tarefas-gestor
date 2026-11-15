@@ -64,25 +64,55 @@ git clone https://github.com/joaogpnfs/tarefas-gestor.git
 cd tarefas-gestor
 ```
 
-2. Instale as dependências:
+2. Instale as dependências do backend:
 ```bash
 npm install
 ```
 
-3. (Opcional) Popule o banco com dados de exemplo:
+3. Instale as dependências do frontend:
+```bash
+cd web
+npm install
+cd ..
+```
+
+4. (Opcional) Popule o banco com dados de exemplo:
 ```bash
 npm run seed
 ```
 
-4. Inicie o servidor:
+5. Build do frontend e backend:
+```bash
+npm run build
+cd web && npm run build && cd ..
+```
+
+6. Inicie o servidor de produção:
 ```bash
 npm start
 ```
 
-5. Acesse no navegador:
+O servidor irá servir tanto a API quanto o frontend React compilado.
+
+7. Acesse no navegador:
 ```
 http://localhost:4321
 ```
+
+### Desenvolvimento
+
+Para rodar em modo de desenvolvimento com hot-reload:
+
+```bash
+# Terminal 1: Backend com tsx
+npm run dev
+
+# Terminal 2: Frontend com Vite
+cd web
+npm run dev
+```
+
+No modo desenvolvimento, o frontend roda em `http://localhost:5173` e faz proxy das requisições `/api` para o backend em `http://localhost:4321`.
 
 ## 🧪 Como Executar os Testes
 
@@ -138,23 +168,32 @@ tarefas-gestor/
 ## 🛠️ Tecnologias Utilizadas
 
 ### Backend
-- **Node.js** - Ambiente de execução JavaScript
-- **Express** - Framework web para APIs
-- **better-sqlite3** - Driver SQLite para Node.js
-- **cors** - Middleware para CORS
+- **Node.js 18+** - Ambiente de execução JavaScript
+- **TypeScript 7.0** - Superset tipado do JavaScript
+- **Express 5.3** - Framework web para APIs REST
+- **better-sqlite3 13.2** - Driver SQLite síncrono para Node.js
+- **CORS** - Middleware para compartilhamento de recursos
 
 ### Frontend
-- **HTML5** - Estrutura das páginas
-- **CSS3** - Estilização e layout responsivo
-- **JavaScript (ES6+)** - Interatividade e comunicação com API
+- **React 19** - Biblioteca para interfaces de usuário
+- **Vite 8** - Build tool e dev server ultrarrápido
+- **TypeScript 7.0** - Tipagem estática para JavaScript
+- **Tailwind CSS 3.4** - Framework CSS utility-first
+- **shadcn/ui** - Componentes acessíveis com Radix UI
+- **Lucide React** - Ícones modernos
+- **Recharts** - Gráficos e visualizações de dados
+- **@dnd-kit** - Drag-and-drop para Kanban board
+- **Sonner** - Toast notifications elegantes
+- **React Router 7** - Roteamento declarativo
 
 ### Testes
-- **Mocha** - Framework de testes
-- **Chai** - Biblioteca de asserções
-- **Supertest** - Testes de API HTTP
+- **Mocha 12.0** - Framework de testes
+- **Chai 6.3** - Biblioteca de asserções BDD/TDD
+- **Supertest 7.3** - Testes de integração HTTP
+- **tsx** - Execução de TypeScript com hot-reload
 
 ### Banco de Dados
-- **SQLite** - Banco de dados relacional leve
+- **SQLite** - Banco de dados relacional embarcado e serverless
 
 ## 📡 Endpoints da API
 
