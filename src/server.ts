@@ -15,15 +15,16 @@ initializeDatabase();
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/dashboard', dashboardRouter);
 app.use('/api/projetos', projetosRouter);
 app.use('/api/tarefas', tarefasRouter);
 app.use('/api/membros', membrosRouter);
-app.use('/api/dashboard', dashboardRouter);
 
 const webDistPath = path.join(__dirname, '../web/dist');
-if (process.env.NODE_ENV !== 'test') {
+const fs = require('fs');
+if (process.env.NODE_ENV !== 'test' && fs.existsSync(webDistPath)) {
   app.use(express.static(webDistPath));
-  app.get('*', (_req, res) => {
+  app.use((req, res) => {
     res.sendFile(path.join(webDistPath, 'index.html'));
   });
 }

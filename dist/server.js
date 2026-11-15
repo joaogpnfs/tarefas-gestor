@@ -16,14 +16,15 @@ const PORT = process.env.PORT || 4321;
 (0, schema_1.initializeDatabase)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+app.use('/api/dashboard', dashboard_1.default);
 app.use('/api/projetos', projetos_1.default);
 app.use('/api/tarefas', tarefas_1.default);
 app.use('/api/membros', membros_1.default);
-app.use('/api/dashboard', dashboard_1.default);
 const webDistPath = path_1.default.join(__dirname, '../web/dist');
-if (process.env.NODE_ENV !== 'test') {
+const fs = require('fs');
+if (process.env.NODE_ENV !== 'test' && fs.existsSync(webDistPath)) {
     app.use(express_1.default.static(webDistPath));
-    app.get('*', (_req, res) => {
+    app.use((req, res) => {
         res.sendFile(path_1.default.join(webDistPath, 'index.html'));
     });
 }
