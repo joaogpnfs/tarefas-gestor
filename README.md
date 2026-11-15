@@ -1,16 +1,16 @@
-# Sistema de Controle de Tarefas e Projetos
+# Taskora — Controle de Tarefas e Projetos
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Online-success)](https://joaogpnfs.github.io/tarefas-gestor/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Sistema web para gerenciamento de tarefas e projetos com visualização Kanban, desenvolvido como projeto da disciplina Projeto e Desenvolvimento de Sistemas I do curso de Engenharia de Software da UniFil.
+Sistema web para gerenciamento de tarefas e projetos com interface inspirada no Notion e no Trello, desenvolvido como projeto da disciplina Projeto e Desenvolvimento de Sistemas I do curso de Engenharia de Software da UniFil.
 
-![Dashboard](https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Dashboard+do+Sistema)
+![Início do Taskora](docs/screenshots/home-light.png)
 
 ## 📋 Sobre o Projeto
 
-O Sistema de Controle de Tarefas e Projetos é uma aplicação web inspirada em ferramentas como Trello, que permite o gerenciamento visual de projetos e suas tarefas através de quadros Kanban. O sistema oferece CRUD completo para projetos, tarefas e membros da equipe, além de dashboard com estatísticas e identificação de tarefas atrasadas.
+O Taskora é uma aplicação web inspirada no Notion (barra lateral, páginas com capa e ícone, banco de dados em tabela) e no Trello (quadro Kanban com cartões, etiquetas e arrastar e soltar), que permite o gerenciamento visual de projetos e suas tarefas através de quadros Kanban. O sistema oferece CRUD completo para projetos, tarefas e membros da equipe, além de dashboard com estatísticas e identificação de tarefas atrasadas.
 
 **Desenvolvido por:** João Gabriel Pereira Nascimento Feitosa da Silva  
 **RA:** 263466036  
@@ -19,35 +19,59 @@ O Sistema de Controle de Tarefas e Projetos é uma aplicação web inspirada em 
 
 ## ✨ Funcionalidades
 
-### Projetos
+### Projetos (páginas no estilo Notion)
 - ✅ Criar, listar, editar e excluir projetos
-- 🎨 Personalização de cores para identificação visual
-- 📊 Visualização de estatísticas por projeto
+- 🖼️ Capa em degradê, ícone em emoji, título e descrição editáveis direto na página
+- 🧾 Linha de propriedades: status, membros, prazo e progresso
+- 🗂️ Quatro visualizações das tarefas: **Quadro**, **Tabela**, **Lista** e **Calendário**
+- 🖼️ Galeria de projetos com capa, progresso e participantes
 
-### Tarefas
+### Tarefas (cartões no estilo Trello)
 - ✅ CRUD completo de tarefas
-- 📋 Quadro Kanban com três colunas (A fazer, Em andamento, Concluído)
-- 🏷️ Sistema de prioridades (Baixa, Média, Alta) com código de cores
-- 👤 Atribuição de responsáveis
-- 📅 Definição de datas de entrega
-- 🔍 Filtros por prioridade, responsável e status
-- ⚠️ Identificação automática de tarefas atrasadas
+- 📋 Quadro Kanban com três listas (A fazer, Em andamento, Concluído) e arrastar e soltar
+- 🏷️ Etiquetas coloridas, prioridades (Baixa, Média, Alta) e capa colorida no cartão
+- ☑️ Progresso de checklist e contador de comentários
+- 📅 Data de entrega com destaque: vermelho quando atrasada, verde quando concluída
+- 🪟 Janela de detalhes do cartão com ações (Mover, Prioridade, Capa, Excluir)
+- 🔍 Filtros por prioridade, projeto e responsável, além de busca rápida (Ctrl + K)
 
 ### Membros
-- ✅ Gerenciamento de membros da equipe
+- ✅ Gerenciamento de membros da equipe (galeria com avatar, cargo e contagem de tarefas)
 - ✉️ Validação de email com verificação de duplicidade
-- 👥 Atribuição de cargos
 
-### Dashboard
-- 📊 Estatísticas gerais do sistema
-- 📈 Contadores por status
-- 🚨 Lista de tarefas atrasadas
+### Início (dashboard)
+- 👋 Saudação com a data do dia
+- 📊 Cartões de estatísticas, gráfico de status (rosca) e de prioridades (barras)
+- 📥 Minhas tarefas agrupadas em Hoje, Atrasadas e Próximas
+- 🗓️ Prazos dos próximos 7 dias e projetos recentes
 
 ### Interface
-- 📱 Design responsivo para desktop e mobile
-- 🎨 Interface moderna e intuitiva
+- 🌗 Modo claro e escuro (preferência salva no navegador)
+- 🔤 Tipografia Inter, paleta neutra e quente, sombras suaves e microanimações
+- ♿ Respeita `prefers-reduced-motion`
 - ⚡ Feedback visual com mensagens toast
-- 🎯 Navegação fluida entre páginas
+
+## 🖼️ Capturas de Tela
+
+| Início (claro) | Início (escuro) |
+| --- | --- |
+| ![Início claro](docs/screenshots/home-light.png) | ![Início escuro](docs/screenshots/home-dark.png) |
+
+| Quadro Kanban do projeto | Arrastando um cartão |
+| --- | --- |
+| ![Quadro](docs/screenshots/projeto-quadro.png) | ![Arrastando](docs/screenshots/quadro-arrastando.png) |
+
+| Visualização em tabela | Calendário |
+| --- | --- |
+| ![Tabela](docs/screenshots/projeto-tabela.png) | ![Calendário](docs/screenshots/calendario.png) |
+
+| Detalhes do cartão | Todas as tarefas |
+| --- | --- |
+| ![Detalhes do cartão](docs/screenshots/cartao-detalhe.png) | ![Tarefas](docs/screenshots/tarefas.png) |
+
+| Membros | Quadro (escuro) |
+| --- | --- |
+| ![Membros](docs/screenshots/membros.png) | ![Quadro escuro](docs/screenshots/projeto-quadro-dark.png) |
 
 ## 🚀 Como Executar
 
@@ -133,36 +157,38 @@ Os testes cobrem:
 
 ```
 tarefas-gestor/
-├── src/
+├── src/                         # Backend (Express + TypeScript)
 │   ├── database/
-│   │   ├── schema.js          # Schema do banco SQLite
-│   │   └── connection.js      # Gerenciamento de conexão
-│   ├── models/
-│   │   ├── Projeto.js         # Model de Projeto
-│   │   ├── Tarefa.js          # Model de Tarefa
-│   │   └── Membro.js          # Model de Membro
-│   ├── routes/
-│   │   ├── projetos.js        # Rotas da API de projetos
-│   │   ├── tarefas.js         # Rotas da API de tarefas
-│   │   ├── membros.js         # Rotas da API de membros
-│   │   └── dashboard.js       # Rotas do dashboard
-│   ├── server.js              # Configuração do servidor Express
-│   └── seed.js                # Script de dados de exemplo
-├── public/
-│   ├── index.html             # Página principal
-│   ├── css/
-│   │   └── style.css          # Estilos da aplicação
-│   └── js/
-│       └── app.js             # Lógica do frontend
+│   │   ├── schema.ts            # Schema SQLite + migração de colunas opcionais
+│   │   └── connection.ts        # Gerenciamento de conexão
+│   ├── models/                  # Projeto.ts, Tarefa.ts, Membro.ts
+│   ├── routes/                  # projetos.ts, tarefas.ts, membros.ts, dashboard.ts
+│   ├── types/index.ts           # Tipos compartilhados
+│   ├── server.ts                # Servidor Express (API + frontend compilado)
+│   └── seed.ts                  # Dados de exemplo (datas relativas a hoje)
+├── dist/                        # Backend compilado (npm run build)
+├── web/                         # Frontend (React + Vite + TypeScript)
+│   └── src/
+│       ├── components/
+│       │   ├── Layout.tsx       # Estrutura: barra lateral + topo + modais globais
+│       │   ├── Sidebar.tsx      # Barra lateral no estilo Notion
+│       │   ├── Topbar.tsx       # Trilha de navegação (breadcrumbs) e tema
+│       │   ├── TaskCard.tsx     # Cartão do quadro no estilo Trello
+│       │   ├── TaskModal.tsx    # Detalhes/criação de cartão
+│       │   ├── ProjectDialog.tsx, SearchDialog.tsx, ProjectGallery.tsx
+│       │   ├── Avatar.tsx, Pills.tsx
+│       │   ├── views/           # BoardView, TableView, ListView, CalendarView
+│       │   └── ui/              # Componentes base (shadcn/ui + Radix)
+│       ├── lib/                 # api.ts, data.tsx (estado global), ui.ts, theme.ts
+│       └── pages/               # Home, ProjetoPage, Projetos, Tarefas, Membros
 ├── test/
-│   └── api.test.js            # Testes da API
+│   └── api.test.ts              # Testes de integração da API
 ├── docs/
-│   └── index.html             # Landing page (GitHub Pages)
-├── documentacao/
-│   ├── documentacao.md        # Documentação técnica completa
-│   └── roteiro-video.md       # Roteiro para vídeo de defesa
-├── package.json               # Dependências e scripts
-└── README.md                  # Este arquivo
+│   ├── index.html               # Landing page (GitHub Pages)
+│   └── screenshots/             # Capturas de tela usadas neste README
+├── documentacao/                # Documentação técnica, PDF e roteiro do vídeo
+├── package.json
+└── README.md
 ```
 
 ## 🛠️ Tecnologias Utilizadas
@@ -179,7 +205,10 @@ tarefas-gestor/
 - **Vite 8** - Build tool e dev server ultrarrápido
 - **TypeScript 7.0** - Tipagem estática para JavaScript
 - **Tailwind CSS 3.4** - Framework CSS utility-first
-- **shadcn/ui** - Componentes acessíveis com Radix UI
+- **shadcn/ui** - Componentes acessíveis com Radix UI (Dialog, Dropdown Menu)
+- **date-fns** - Datas em português (calendário, prazos relativos)
+- **Inter (@fontsource-variable/inter)** - Tipografia
+- **tailwindcss-animate** - Animações de entrada dos componentes
 - **Lucide React** - Ícones modernos
 - **Recharts** - Gráficos e visualizações de dados
 - **@dnd-kit** - Drag-and-drop para Kanban board
@@ -221,7 +250,14 @@ tarefas-gestor/
 - `DELETE /api/membros/:id` - Deletar membro
 
 ### Dashboard
-- `GET /api/dashboard/stats` - Obter estatísticas gerais
+- `GET /api/dashboard` - Obter estatísticas gerais
+
+### Campos opcionais
+
+Todos têm valor padrão, então clientes antigos continuam funcionando:
+
+- **Projeto:** `emoji` (padrão `📁`), `capa` (nome do degradê, ex.: `aurora`) e `prazo` (data)
+- **Tarefa:** `etiquetas` (texto separado por vírgulas ou array), `capa` (cor), `checklist_total`, `checklist_feitos` e `comentarios`
 
 ## 📚 Documentação
 
@@ -243,6 +279,9 @@ A documentação inclui:
 ```bash
 # Iniciar o servidor
 npm start
+
+# Compilar o backend
+npm run build
 
 # Executar testes
 npm test
