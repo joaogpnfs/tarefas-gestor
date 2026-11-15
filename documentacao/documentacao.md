@@ -212,6 +212,8 @@ flowchart LR
     UC06 -. "«extend»" .-> UC02
 ```
 
+*Figura 1 – Diagrama de casos de uso do Taskora.*
+
 ### 7.2. Descrição dos Principais Casos de Uso
 
 **UC01 – Gerenciar projetos**
@@ -253,22 +255,19 @@ O sistema segue uma arquitetura cliente-servidor em camadas. O frontend é uma a
 ```mermaid
 flowchart TB
     subgraph C["Apresentação: navegador (React 19 + TypeScript)"]
-        P["Páginas<br/>Home, ProjetoPage, Tarefas, Membros, Projetos"]
-        V["Visualizações<br/>BoardView, TableView, ListView, CalendarView"]
-        D["Estado global<br/>DataProvider (lib/data.tsx)"]
-        A["Cliente HTTP<br/>lib/api.ts (fetch)"]
-        P --> V --> D --> A
+        direction LR
+        P["Páginas<br/>(pages/)"] --> V["Visualizações<br/>(views/)"] --> D["Estado global<br/>(DataProvider)"] --> A["Cliente HTTP<br/>(lib/api.ts)"]
     end
     subgraph SV["Servidor: Node.js + Express 5 + TypeScript"]
-        R["Rotas REST<br/>routes/projetos, tarefas, membros, dashboard"]
-        M["Modelos e regras de negócio<br/>models/Projeto, Tarefa, Membro"]
-        CN["Acesso a dados<br/>database/connection.ts + schema.ts"]
-        R --> M --> CN
+        direction LR
+        R["Rotas REST<br/>(routes/)"] --> M["Modelos e regras<br/>(models/)"] --> CN["Acesso a dados<br/>(database/)"]
     end
     DB[("SQLite<br/>database.db")]
-    A -- "HTTP / JSON<br/>/api/*" --> R
-    CN -- "better-sqlite3" --> DB
+    C -- "HTTP / JSON em /api/*" --> SV
+    SV -- "better-sqlite3" --> DB
 ```
+
+*Figura 2 – Arquitetura em camadas do sistema.*
 
 | Camada | Responsabilidade | Arquivos |
 |--------|------------------|----------|
@@ -283,7 +282,7 @@ flowchart TB
 tarefas-gestor/
 ├── src/                      # Backend (TypeScript)
 │   ├── server.ts             # App Express, rotas /api e entrega do web/dist
-│   ├── seed.ts               # Dados de demonstração (7 membros, 5 projetos, 37 tarefas)
+│   ├── seed.ts               # Dados de demonstração
 │   ├── database/
 │   │   ├── connection.ts     # Conexão única (singleton) com o SQLite
 │   │   └── schema.ts         # Tabelas, índices e migração de colunas opcionais
@@ -295,7 +294,7 @@ tarefas-gestor/
 ├── dist/                     # Backend compilado pelo tsc (npm run build)
 ├── web/                      # Frontend (React + Vite + TypeScript)
 │   ├── src/
-│   │   ├── App.tsx           # Rotas: /, /projetos, /projetos/:id, /tarefas, /minhas, /membros
+│   │   ├── App.tsx           # Rotas da SPA (React Router)
 │   │   ├── pages/            # Home, ProjetoPage, Projetos, Tarefas, Membros
 │   │   ├── components/       # Sidebar, Topbar, TaskCard, TaskModal, SearchDialog...
 │   │   │   ├── views/        # BoardView, TableView, ListView, CalendarView
@@ -375,7 +374,6 @@ O **TypeScript** nas duas pontas permite descrever as entidades com interfaces (
 
 ```mermaid
 classDiagram
-    direction LR
     class Projeto {
         +number id
         +string nome
@@ -439,6 +437,8 @@ classDiagram
     MembroModel ..> Membro : gerencia
 ```
 
+*Figura 3 – Diagrama de classes das entidades e dos modelos.*
+
 `Status` aceita "A fazer", "Em andamento" e "Concluído". `Prioridade` aceita "Baixa", "Média" e "Alta".
 
 ### 10.2. Modelo Entidade-Relacionamento
@@ -483,6 +483,8 @@ erDiagram
         DATETIME criado_em
     }
 ```
+
+*Figura 4 – Modelo entidade-relacionamento, com as colunas opcionais da segunda versão.*
 
 ### 10.3. Dicionário de Dados
 
@@ -539,34 +541,31 @@ O diagrama mostra o que acontece quando o usuário arrasta um cartão da lista "
 ```mermaid
 sequenceDiagram
     actor U as Usuário
-    participant B as BoardView (@dnd-kit)
+    participant B as BoardView
     participant D as DataProvider
-    participant A as lib/api.ts
-    participant R as Rota PUT /api/tarefas/:id
+    participant R as API Express
     participant M as TarefaModel
     participant DB as SQLite
-
-    U->>B: Arrasta o cartão e solta em "Em andamento"
-    B->>B: onDragEnd identifica a lista de destino
-    B->>D: updateTarefa(id, { status: "Em andamento" })
-    D->>D: Atualização otimista (cartão já aparece na nova lista)
-    D->>A: api.tarefas.update(id, dados)
-    A->>R: PUT /api/tarefas/:id (JSON)
-    R->>M: TarefaModel.update(id, dados)
-    M->>DB: UPDATE tarefas SET status = ?, atualizado_em = CURRENT_TIMESTAMP
-    DB-->>M: OK (ou erro de CHECK)
-    M->>DB: SELECT da tarefa com projeto e responsável
-    DB-->>M: Tarefa atualizada
+    U->>B: Solta o cartão<br/>em "Em andamento"
+    B->>D: updateTarefa(id,<br/>{ status })
+    D->>D: Atualização<br/>otimista
+    D->>R: PUT /api/tarefas/:id
+    R->>M: update(id, dados)
+    M->>DB: UPDATE tarefas<br/>SET status = ?
+    DB-->>M: OK
+    M->>DB: SELECT tarefa
+    DB-->>M: Tarefa
     M-->>R: Tarefa
-    R-->>A: 200 OK + JSON
-    A-->>D: Tarefa atualizada
+    R-->>D: 200 OK + JSON
     D-->>B: Estado confirmado
-    alt Falha na API (400/500)
-        A-->>D: Erro
-        D->>D: Restaura o estado anterior
-        D-->>U: Notificação de erro (sonner)
+    alt API responde 400 ou 500
+        R-->>D: Erro
+        D->>D: Restaura o<br/>estado anterior
+        D-->>U: Toast de erro
     end
 ```
+
+*Figura 5 – Diagrama de sequência ao mover um cartão no quadro.*
 
 ---
 
@@ -623,43 +622,43 @@ As capturas abaixo foram feitas com os dados de demonstração criados pelo coma
 
 ![Tela inicial com indicadores, gráficos, minhas tarefas e prazos da semana](../docs/screenshots/home-light.png)
 
-*Figura 1 – Tela inicial: indicadores, gráfico de tarefas por status, gráfico por prioridade, progresso dos projetos, minhas tarefas e prazos da semana.*
+*Figura 6 – Tela inicial: indicadores, gráfico de tarefas por status, gráfico por prioridade, progresso dos projetos, minhas tarefas e prazos da semana.*
 
 ### 13.2. Página do Projeto: Quadro Kanban
 
 ![Página do projeto com capa, ícone, propriedades e quadro Kanban](../docs/screenshots/projeto-quadro.png)
 
-*Figura 2 – Página do projeto no estilo Notion (capa, emoji, status, membros, prazo e progresso) com o quadro Kanban no estilo Trello.*
+*Figura 7 – Página do projeto no estilo Notion (capa, emoji, status, membros, prazo e progresso) com o quadro Kanban no estilo Trello.*
 
 ### 13.3. Arrastando um Cartão
 
 ![Cartão sendo arrastado entre listas do quadro](../docs/screenshots/quadro-arrastando.png)
 
-*Figura 3 – Cartão sendo arrastado para outra lista, com espaço reservado no destino.*
+*Figura 8 – Cartão sendo arrastado para outra lista, com espaço reservado no destino.*
 
 ### 13.4. Detalhe do Cartão
 
 ![Janela de detalhe do cartão](../docs/screenshots/cartao-detalhe.png)
 
-*Figura 4 – Detalhe do cartão com responsável, etiquetas, data de entrega, descrição, checklist, atividade e ações.*
+*Figura 9 – Detalhe do cartão com responsável, etiquetas, data de entrega, descrição, checklist, atividade e ações.*
 
 ### 13.5. Visualização em Tabela
 
 ![Tarefas do projeto em tabela](../docs/screenshots/projeto-tabela.png)
 
-*Figura 5 – Visualização em tabela com status, prioridade, responsável, etiquetas, entrega e checklist.*
+*Figura 10 – Visualização em tabela com status, prioridade, responsável, etiquetas, entrega e checklist.*
 
 ### 13.6. Visualização em Calendário
 
 ![Tarefas em calendário mensal](../docs/screenshots/calendario.png)
 
-*Figura 6 – Calendário mensal com as tarefas posicionadas pela data de entrega.*
+*Figura 11 – Calendário mensal com as tarefas posicionadas pela data de entrega.*
 
 ### 13.7. Modo Escuro
 
 ![Quadro do projeto no modo escuro](../docs/screenshots/projeto-quadro-dark.png)
 
-*Figura 7 – O mesmo quadro no modo escuro.*
+*Figura 12 – O mesmo quadro no modo escuro.*
 
 Outras capturas (todas as tarefas, membros e início no modo escuro) estão na pasta `docs/screenshots/` do repositório.
 
