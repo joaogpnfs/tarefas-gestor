@@ -13,15 +13,15 @@ class ProjetoModel {
     }
     static create(data) {
         const db = (0, connection_1.getDatabase)();
-        const { nome, descricao, cor } = data;
+        const { nome, descricao, cor, emoji, capa, prazo } = data;
         if (!nome || nome.trim() === '') {
             throw new Error('Nome do projeto é obrigatório');
         }
         const stmt = db.prepare(`
-      INSERT INTO projetos (nome, descricao, cor)
-      VALUES (?, ?, ?)
+      INSERT INTO projetos (nome, descricao, cor, emoji, capa, prazo)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
-        const result = stmt.run(nome.trim(), descricao || null, cor || '#3B82F6');
+        const result = stmt.run(nome.trim(), descricao || null, cor || '#3B82F6', emoji || '📁', capa || null, prazo || null);
         return this.getById(result.lastInsertRowid);
     }
     static update(id, data) {
@@ -30,12 +30,20 @@ class ProjetoModel {
         if (!nome || nome.trim() === '') {
             throw new Error('Nome do projeto é obrigatório');
         }
+        const existing = this.getById(id);
+        if (!existing)
+            return undefined;
+        // Campos opcionais: se não forem enviados, mantém o valor atual
+        const emoji = data.emoji !== undefined ? data.emoji || '📁' : existing.emoji;
+        const capa = data.capa !== undefined ? data.capa || null : existing.capa;
+        const prazo = data.prazo !== undefined ? data.prazo || null : existing.prazo;
         const stmt = db.prepare(`
       UPDATE projetos 
-      SET nome = ?, descricao = ?, cor = ?, atualizado_em = CURRENT_TIMESTAMP
+      SET nome = ?, descricao = ?, cor = ?, emoji = ?, capa = ?, prazo = ?,
+          atualizado_em = CURRENT_TIMESTAMP
       WHERE id = ?
     `);
-        stmt.run(nome.trim(), descricao || null, cor || '#3B82F6', id);
+        stmt.run(nome.trim(), descricao || null, cor || '#3B82F6', emoji, capa, prazo, id);
         return this.getById(id);
     }
     static delete(id) {

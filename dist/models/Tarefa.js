@@ -1,13 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TarefaModel = void 0;
+exports.normalizeEtiquetas = normalizeEtiquetas;
 const connection_1 = require("../database/connection");
+/** Normaliza etiquetas recebidas como array ou texto separado por vírgulas. */
+function normalizeEtiquetas(value) {
+    if (!value)
+        return '';
+    const list = Array.isArray(value) ? value : String(value).split(',');
+    return Array.from(new Set(list.map((e) => String(e).trim()).filter(Boolean))).join(',');
+}
+function toCount(value) {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+}
 class TarefaModel {
     static getAll(filters = {}) {
         const db = (0, connection_1.getDatabase)();
         let query = `
       SELECT t.*, 
              p.nome as projeto_nome,
+             p.emoji as projeto_emoji,
+             p.cor as projeto_cor,
              m.nome as responsavel_nome
       FROM tarefas t
       LEFT JOIN projetos p ON t.projeto_id = p.id
@@ -39,6 +53,8 @@ class TarefaModel {
         return db.prepare(`
       SELECT t.*, 
              p.nome as projeto_nome,
+             p.emoji as projeto_emoji,
+             p.cor as projeto_cor,
              m.nome as responsavel_nome
       FROM tarefas t
       LEFT JOIN projetos p ON t.projeto_id = p.id
@@ -56,10 +72,11 @@ class TarefaModel {
             throw new Error('Projeto é obrigatório');
         }
         const stmt = db.prepare(`
-      INSERT INTO tarefas (projeto_id, titulo, descricao, status, prioridade, responsavel_id, data_entrega)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO tarefas (projeto_id, titulo, descricao, status, prioridade, responsavel_id, data_entrega,
+                           etiquetas, capa, checklist_total, checklist_feitos, comentarios)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-        const result = stmt.run(projeto_id, titulo.trim(), descricao || null, status || 'A fazer', prioridade || 'Média', responsavel_id || null, data_entrega || null);
+        const result = stmt.run(projeto_id, titulo.trim(), descricao || null, status || 'A fazer', prioridade || 'Média', responsavel_id || null, data_entrega || null, normalizeEtiquetas(data.etiquetas), data.capa || null, toCount(data.checklist_total), toCount(data.checklist_feitos), toCount(data.comentarios));
         return this.getById(result.lastInsertRowid);
     }
     static update(id, data) {
@@ -95,6 +112,20 @@ class TarefaModel {
         if (data.data_entrega !== undefined) {
             updates.push('data_entrega = ?');
             params.push(data.data_entrega);
+        }
+        if (data.etiquetas !== undefined) {
+            updates.push('etiquetas = ?');
+            params.push(normalizeEtiquetas(data.etiquetas));
+        }
+        if (data.capa !== undefined) {
+            updates.push('capa = ?');
+            params.push(data.capa || null);
+        }
+        for (const field of ['checklist_total', 'checklist_feitos', 'comentarios']) {
+            if (data[field] !== undefined) {
+                updates.push(`${field} = ?`);
+                params.push(toCount(data[field]));
+            }
         }
         if (updates.length === 0)
             return existing;

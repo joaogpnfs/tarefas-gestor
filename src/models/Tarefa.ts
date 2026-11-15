@@ -1,5 +1,17 @@
 import { getDatabase } from '../database/connection';
-import { Tarefa } from '../types';
+import { Tarefa, TarefaInput } from '../types';
+
+/** Normaliza etiquetas recebidas como array ou texto separado por vírgulas. */
+export function normalizeEtiquetas(value: string | string[] | undefined | null): string {
+  if (!value) return '';
+  const list = Array.isArray(value) ? value : String(value).split(',');
+  return Array.from(new Set(list.map((e) => String(e).trim()).filter(Boolean))).join(',');
+}
+
+function toCount(value: unknown): number {
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+}
 
 interface TarefaFilters {
   projeto_id?: number;
@@ -14,6 +26,8 @@ export class TarefaModel {
     let query = `
       SELECT t.*, 
              p.nome as projeto_nome,
+             p.emoji as projeto_emoji,
+             p.cor as projeto_cor,
              m.nome as responsavel_nome
       FROM tarefas t
       LEFT JOIN projetos p ON t.projeto_id = p.id
@@ -53,6 +67,8 @@ export class TarefaModel {
     return db.prepare(`
       SELECT t.*, 
              p.nome as projeto_nome,
+             p.emoji as projeto_emoji,
+             p.cor as projeto_cor,
              m.nome as responsavel_nome
       FROM tarefas t
       LEFT JOIN projetos p ON t.projeto_id = p.id
@@ -61,15 +77,7 @@ export class TarefaModel {
     `).get(id) as Tarefa | undefined;
   }
 
-  static create(data: {
-    projeto_id: number;
-    titulo: string;
-    descricao?: string;
-    status?: string;
-    prioridade?: string;
-    responsavel_id?: number;
-    data_entrega?: string;
-  }): Tarefa {
+  static create(data: TarefaInput & { projeto_id: number; titulo: string }): Tarefa {
     const db = getDatabase();
     const { projeto_id, titulo, descricao, status, prioridade, responsavel_id, data_entrega } = data;
     
@@ -82,8 +90,9 @@ export class TarefaModel {
     }
     
     const stmt = db.prepare(`
-      INSERT INTO tarefas (projeto_id, titulo, descricao, status, prioridade, responsavel_id, data_entrega)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO tarefas (projeto_id, titulo, descricao, status, prioridade, responsavel_id, data_entrega,
+                           etiquetas, capa, checklist_total, checklist_feitos, comentarios)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
     const result = stmt.run(
@@ -93,20 +102,18 @@ export class TarefaModel {
       status || 'A fazer',
       prioridade || 'Média',
       responsavel_id || null,
-      data_entrega || null
+      data_entrega || null,
+      normalizeEtiquetas(data.etiquetas),
+      data.capa || null,
+      toCount(data.checklist_total),
+      toCount(data.checklist_feitos),
+      toCount(data.comentarios)
     );
     
     return this.getById(result.lastInsertRowid as number)!;
   }
 
-  static update(id: number, data: {
-    titulo?: string;
-    descricao?: string;
-    status?: string;
-    prioridade?: string;
-    responsavel_id?: number | null;
-    data_entrega?: string | null;
-  }): Tarefa | undefined {
+  static update(id: number, data: TarefaInput): Tarefa | undefined {
     const db = getDatabase();
     const existing = this.getById(id);
     if (!existing) return undefined;
@@ -145,6 +152,23 @@ export class TarefaModel {
     if (data.data_entrega !== undefined) {
       updates.push('data_entrega = ?');
       params.push(data.data_entrega);
+    }
+    
+    if (data.etiquetas !== undefined) {
+      updates.push('etiquetas = ?');
+      params.push(normalizeEtiquetas(data.etiquetas));
+    }
+
+    if (data.capa !== undefined) {
+      updates.push('capa = ?');
+      params.push(data.capa || null);
+    }
+
+    for (const field of ['checklist_total', 'checklist_feitos', 'comentarios'] as const) {
+      if (data[field] !== undefined) {
+        updates.push(`${field} = ?`);
+        params.push(toCount(data[field]));
+      }
     }
     
     if (updates.length === 0) return existing;

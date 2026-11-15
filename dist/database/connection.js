@@ -6,7 +6,8 @@ const schema_1 = require("./schema");
 let db = null;
 function getDatabase() {
     if (!db) {
-        db = (0, schema_1.initializeDatabase)();
+        const customPath = process.env.DATABASE_PATH;
+        db = customPath ? (0, schema_1.initializeDatabase)(customPath) : (0, schema_1.initializeDatabase)();
     }
     return db;
 }

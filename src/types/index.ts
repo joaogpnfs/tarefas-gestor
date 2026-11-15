@@ -11,6 +11,9 @@ export interface Projeto {
   nome: string;
   descricao: string | null;
   cor: string;
+  emoji: string;
+  capa: string | null;
+  prazo: string | null;
   criado_em: string;
   atualizado_em: string;
 }
@@ -24,9 +27,16 @@ export interface Tarefa {
   prioridade: 'Baixa' | 'Média' | 'Alta';
   responsavel_id: number | null;
   data_entrega: string | null;
+  etiquetas: string;
+  capa: string | null;
+  checklist_total: number;
+  checklist_feitos: number;
+  comentarios: number;
   criado_em: string;
   atualizado_em: string;
   projeto_nome?: string;
+  projeto_emoji?: string;
+  projeto_cor?: string;
   responsavel_nome?: string | null;
 }
 
@@ -61,4 +71,28 @@ export interface DashboardStats {
     Média: number;
     Alta: number;
   };
+}
+
+export interface ProjetoInput {
+  nome: string;
+  descricao?: string;
+  cor?: string;
+  emoji?: string;
+  capa?: string | null;
+  prazo?: string | null;
+}
+
+export interface TarefaInput {
+  projeto_id?: number;
+  titulo?: string;
+  descricao?: string;
+  status?: string;
+  prioridade?: string;
+  responsavel_id?: number | null;
+  data_entrega?: string | null;
+  etiquetas?: string | string[];
+  capa?: string | null;
+  checklist_total?: number;
+  checklist_feitos?: number;
+  comentarios?: number;
 }

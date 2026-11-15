@@ -44,5 +44,38 @@ export function initializeDatabase(dbPath = path.join(__dirname, '../../database
     CREATE INDEX IF NOT EXISTS idx_tarefas_responsavel ON tarefas(responsavel_id);
   `);
   
+  migrateOptionalColumns(db);
+
   return db;
+}
+
+/**
+ * Adiciona colunas opcionais introduzidas depois da primeira versão.
+ * Todas possuem valor padrão, então bancos antigos continuam funcionando.
+ */
+function migrateOptionalColumns(db: Database.Database): void {
+  const optionalColumns: Record<string, Array<[string, string]>> = {
+    projetos: [
+      ['emoji', "TEXT DEFAULT '📁'"],
+      ['capa', 'TEXT'],
+      ['prazo', 'DATE'],
+    ],
+    tarefas: [
+      ['etiquetas', "TEXT DEFAULT ''"],
+      ['capa', 'TEXT'],
+      ['checklist_total', 'INTEGER DEFAULT 0'],
+      ['checklist_feitos', 'INTEGER DEFAULT 0'],
+      ['comentarios', 'INTEGER DEFAULT 0'],
+    ],
+  };
+
+  for (const [table, columns] of Object.entries(optionalColumns)) {
+    const existing = (db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>)
+      .map((c) => c.name);
+    for (const [name, definition] of columns) {
+      if (!existing.includes(name)) {
+        db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`);
+      }
+    }
+  }
 }
