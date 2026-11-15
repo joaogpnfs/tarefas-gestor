@@ -1,111 +1,116 @@
-# Sistema de Controle de Tarefas e Projetos
-
----
+<!-- capa -->
+<div align="center">
 
 **UNIVERSIDADE FILADÉLFIA – UNIFIL**
 
-**Curso:** Engenharia de Software
+**ENGENHARIA DE SOFTWARE**
 
-**Disciplina:** Projeto e Desenvolvimento de Sistemas I
+<br>
 
-**Aluno:** João Gabriel Pereira Nascimento Feitosa da Silva
+**JOÃO GABRIEL PEREIRA NASCIMENTO FEITOSA DA SILVA**
 
-**RA:** 263466036
+RA: 263466036
 
-**Londrina – 2026**
+<br>
+
+# TASKORA: SISTEMA DE CONTROLE DE TAREFAS E PROJETOS
+
+Documentação do projeto apresentada às disciplinas Projeto e Desenvolvimento de Sistemas I e Projeto e Desenvolvimento de Sistemas II
+
+Tutor: Prof. Fernando Nakagawa
+
+<br>
+
+**LONDRINA**
+
+**2026**
+
+</div>
+<!-- /capa -->
 
 ---
 
 ## Sumário
 
-1. [Introdução](#introdução)
-2. [Objetivos](#objetivos)
-3. [Justificativa](#justificativa)
-4. [Escopo](#escopo)
-5. [Requisitos](#requisitos)
-   - 5.1. [Requisitos Funcionais](#requisitos-funcionais)
-   - 5.2. [Requisitos Não Funcionais](#requisitos-não-funcionais)
-6. [Regras de Negócio](#regras-de-negócio)
-7. [Casos de Uso](#casos-de-uso)
-8. [Diagrama de Classes](#diagrama-de-classes)
-9. [Modelo Entidade-Relacionamento](#modelo-entidade-relacionamento)
-10. [Arquitetura](#arquitetura)
-11. [Tecnologias Utilizadas](#tecnologias-utilizadas)
-12. [Protótipo e Telas](#protótipo-e-telas)
-13. [Plano de Testes](#plano-de-testes)
-14. [Análise de Falhas e Riscos (FMEA)](#análise-de-falhas-e-riscos-fmea)
-15. [Cronograma](#cronograma)
-16. [Conclusão](#conclusão)
-17. [Referências](#referências)
+1. [Introdução](#1-introdução)
+2. [Objetivos](#2-objetivos)
+3. [Justificativa](#3-justificativa)
+4. [Escopo](#4-escopo)
+5. [Requisitos](#5-requisitos)
+6. [Regras de Negócio](#6-regras-de-negócio)
+7. [Casos de Uso](#7-casos-de-uso)
+8. [Arquitetura](#8-arquitetura)
+9. [Tecnologias Utilizadas](#9-tecnologias-utilizadas)
+10. [Modelagem de Dados](#10-modelagem-de-dados)
+11. [Diagrama de Sequência: Mover um Cartão](#11-diagrama-de-sequência-mover-um-cartão)
+12. [API REST](#12-api-rest)
+13. [Interface e Telas](#13-interface-e-telas)
+14. [Plano de Testes](#14-plano-de-testes)
+15. [Análise de Falhas e Riscos (FMEA)](#15-análise-de-falhas-e-riscos-fmea)
+16. [Como Executar](#16-como-executar)
+17. [Cronograma](#17-cronograma)
+18. [Conclusão](#18-conclusão)
+19. [Referências](#referências)
 
 ---
 
 ## 1. Introdução
 
-Este documento apresenta o projeto "Sistema de Controle de Tarefas e Projetos", uma aplicação web desenvolvida como trabalho prático da disciplina Projeto e Desenvolvimento de Sistemas I do curso de Engenharia de Software da Universidade Filadélfia (UniFil).
+Este documento apresenta o **Taskora**, um sistema web de controle de tarefas e projetos desenvolvido como trabalho prático das disciplinas Projeto e Desenvolvimento de Sistemas I e II do curso de Engenharia de Software da Universidade Filadélfia (UniFil).
 
-O sistema propõe uma solução para gerenciamento de projetos e tarefas, inspirado em ferramentas como Trello, permitindo o controle de atividades através de quadros Kanban, facilitando a visualização do progresso e a colaboração entre equipes.
+A interface do Taskora se inspira em duas ferramentas muito usadas por equipes de software. Do **Notion** vêm a barra lateral com as páginas dos projetos, a página de projeto com capa, ícone e propriedades, e a alternância entre visualizações de um mesmo conjunto de dados. Do **Trello** vem o quadro Kanban com listas, cartões com etiquetas, prazos, checklist e avatares, além de arrastar e soltar os cartões entre as listas.
+
+O sistema é composto por um backend em Node.js com Express e TypeScript, que expõe uma API REST e persiste os dados em um banco SQLite, e por um frontend em React com TypeScript, construído com Vite, Tailwind CSS e componentes no padrão shadcn/ui.
 
 ---
 
 ## 2. Objetivos
 
-### Objetivo Geral
+### 2.1. Objetivo Geral
 
-Desenvolver um sistema web para controle e gerenciamento de tarefas e projetos, possibilitando o acompanhamento visual do progresso das atividades através de um quadro Kanban.
+Desenvolver um sistema web para controle de tarefas e projetos que permita acompanhar visualmente o andamento das atividades de uma equipe, com persistência em banco de dados relacional e operações CRUD completas.
 
-### Objetivos Específicos
+### 2.2. Objetivos Específicos
 
-- Implementar operações CRUD completas para projetos, tarefas e membros da equipe
-- Desenvolver interface visual intuitiva com quadro Kanban para organização de tarefas
-- Implementar sistema de filtros por prioridade, responsável e status
-- Criar dashboard com estatísticas e métricas do sistema
-- Desenvolver API REST para comunicação entre frontend e backend
-- Implementar validações de dados e mensagens de erro amigáveis
-- Garantir responsividade para acesso em dispositivos móveis
+- Implementar CRUD completo para as entidades Projeto, Tarefa e Membro por meio de uma API REST.
+- Modelar um banco de dados relacional com integridade referencial e restrições de domínio.
+- Oferecer quatro visualizações das tarefas: quadro Kanban, tabela, lista e calendário.
+- Permitir mover tarefas entre status arrastando os cartões no quadro.
+- Apresentar um painel inicial com indicadores, gráficos e prazos da semana.
+- Garantir a qualidade do backend com testes de integração automatizados.
+- Adotar tipagem estática (TypeScript) no backend e no frontend.
 
 ---
 
 ## 3. Justificativa
 
-A gestão eficiente de projetos é fundamental para o sucesso de equipes de desenvolvimento de software. Ferramentas que facilitam a visualização do fluxo de trabalho, como quadros Kanban, melhoram significativamente a produtividade e a comunicação.
+Equipes pequenas, como grupos de trabalhos acadêmicos e startups, costumam controlar tarefas em planilhas ou conversas de mensagens, o que dificulta saber quem está fazendo o quê, o que está atrasado e quanto falta para terminar um projeto. Ferramentas como Trello e Notion resolvem esse problema, e o quadro Kanban, em especial, torna o fluxo de trabalho visível e ajuda a limitar o trabalho em andamento (ANDERSON, 2010).
 
-Este projeto justifica-se pela necessidade de compreender na prática os conceitos de desenvolvimento de sistemas web, incluindo arquitetura de software, padrões de projeto, persistência de dados e interfaces de usuário, aplicados em um contexto real de gestão de projetos.
-
-A escolha por um sistema de controle de tarefas permite explorar diversos conceitos importantes:
-- Modelagem de dados com relacionamentos entre entidades
-- Implementação de API RESTful
-- Manipulação de estado e interações complexas no frontend
-- Validação de dados em múltiplas camadas
-- Tratamento de erros e feedback ao usuário
+O desenvolvimento do Taskora permite aplicar na prática os conteúdos das disciplinas: levantamento de requisitos, modelagem UML e entidade-relacionamento, arquitetura em camadas, construção de API REST, persistência de dados, testes automatizados, análise de riscos e controle de versão com Git.
 
 ---
 
 ## 4. Escopo
 
-### Dentro do Escopo
+### 4.1. Dentro do Escopo
 
-- Cadastro, listagem, edição e exclusão de projetos
-- Cadastro, listagem, edição e exclusão de tarefas
-- Cadastro, listagem, edição e exclusão de membros da equipe
-- Visualização de tarefas em quadro Kanban organizado por status
-- Filtros de tarefas por prioridade, responsável e status
-- Dashboard com estatísticas gerais e tarefas atrasadas
-- Interface web responsiva
-- API REST para todas as operações
-- Persistência de dados em banco SQLite
-- Testes automatizados da API
+- Cadastro, consulta, edição e exclusão de projetos, tarefas e membros.
+- Página de projeto com emoji, capa em degradê, descrição, prazo e progresso.
+- Quadro Kanban com três listas (A fazer, Em andamento, Concluído) e arrastar e soltar.
+- Visualizações em tabela, lista e calendário.
+- Detalhe do cartão com responsável, etiquetas, data de entrega, descrição, checklist e ações.
+- Painel inicial com estatísticas, gráficos de status e de prioridade, minhas tarefas e prazos da semana.
+- Busca rápida global (Ctrl + K) e filtros por prioridade, responsável e projeto.
+- Modo claro e modo escuro.
+- Testes de integração da API.
 
-### Fora do Escopo
+### 4.2. Fora do Escopo
 
-- Sistema de autenticação e autorização de usuários
-- Funcionalidade de drag-and-drop no Kanban
-- Notificações por email ou push
-- Comentários e anexos em tarefas
-- Histórico de alterações
-- Integração com ferramentas externas
-- Aplicativo mobile nativo
-- Deploy em ambiente de produção
+- Autenticação e controle de permissões de usuários.
+- Comentários com texto e anexos (o sistema guarda apenas o contador de comentários).
+- Itens de checklist individuais (o sistema guarda os contadores de itens totais e feitos).
+- Notificações por e-mail e integrações com serviços externos.
+- Colaboração em tempo real entre vários usuários.
 
 ---
 
@@ -113,41 +118,45 @@ A escolha por um sistema de controle de tarefas permite explorar diversos concei
 
 ### 5.1. Requisitos Funcionais
 
-| ID | Descrição | Prioridade |
+| ID | Requisito | Prioridade |
 |----|-----------|------------|
-| RF01 | O sistema deve permitir criar, listar, editar e excluir projetos | Alta |
-| RF02 | O sistema deve permitir associar tarefas a projetos | Alta |
-| RF03 | O sistema deve permitir criar, listar, editar e excluir tarefas | Alta |
-| RF04 | O sistema deve permitir definir status da tarefa (A fazer, Em andamento, Concluído) | Alta |
-| RF05 | O sistema deve permitir definir prioridade da tarefa (Baixa, Média, Alta) | Alta |
-| RF06 | O sistema deve permitir atribuir responsável às tarefas | Média |
-| RF07 | O sistema deve permitir definir data de entrega para tarefas | Média |
-| RF08 | O sistema deve exibir tarefas em quadro Kanban organizado por status | Alta |
-| RF09 | O sistema deve permitir filtrar tarefas por prioridade | Média |
-| RF10 | O sistema deve permitir filtrar tarefas por responsável | Média |
-| RF11 | O sistema deve permitir filtrar tarefas por status | Média |
-| RF12 | O sistema deve permitir cadastrar, listar, editar e excluir membros | Alta |
-| RF13 | O sistema deve exibir dashboard com estatísticas gerais | Média |
-| RF14 | O sistema deve identificar e listar tarefas atrasadas | Média |
-| RF15 | O sistema deve validar email dos membros | Alta |
-| RF16 | O sistema deve impedir email duplicado de membros | Alta |
-| RF17 | O sistema deve validar campos obrigatórios | Alta |
-| RF18 | O sistema deve exibir mensagens de erro amigáveis | Média |
+| RF01 | Cadastrar, listar, editar e excluir projetos com nome, descrição, cor, emoji, capa e prazo | Alta |
+| RF02 | Cadastrar, listar, editar e excluir tarefas vinculadas a um projeto | Alta |
+| RF03 | Cadastrar, listar, editar e excluir membros da equipe com nome, e-mail e cargo | Alta |
+| RF04 | Atribuir um responsável (membro) a cada tarefa | Alta |
+| RF05 | Definir status (A fazer, Em andamento, Concluído) e prioridade (Baixa, Média, Alta) da tarefa | Alta |
+| RF06 | Exibir as tarefas de um projeto em quadro Kanban com três listas | Alta |
+| RF07 | Mover uma tarefa entre listas arrastando e soltando o cartão, atualizando o status no banco | Alta |
+| RF08 | Exibir as tarefas em visualização de tabela, com colunas de status, prioridade, responsável, etiquetas, entrega e checklist | Média |
+| RF09 | Exibir as tarefas em visualização de lista | Média |
+| RF10 | Exibir as tarefas em visualização de calendário mensal pela data de entrega | Média |
+| RF11 | Abrir o detalhe do cartão com responsável, etiquetas, data de entrega, descrição, checklist, atividade e ações (mover, prioridade, capa, excluir) | Alta |
+| RF12 | Adicionar e remover etiquetas da tarefa, exibidas com cores | Média |
+| RF13 | Registrar o progresso do checklist (itens totais e concluídos) e o número de comentários da tarefa | Baixa |
+| RF14 | Definir emoji e capa do projeto e capa colorida do cartão | Baixa |
+| RF15 | Exibir painel inicial com totais, gráfico de tarefas por status, gráfico por prioridade, progresso dos projetos, minhas tarefas e prazos da semana | Média |
+| RF16 | Filtrar tarefas por prioridade, responsável e projeto, e buscar por título | Média |
+| RF17 | Busca global de tarefas e projetos pelo atalho Ctrl + K | Baixa |
+| RF18 | Destacar tarefas atrasadas e listar tarefas atrasadas pela API | Média |
+| RF19 | Alternar entre modo claro e modo escuro, guardando a preferência | Baixa |
+| RF20 | Exibir galeria de projetos e galeria de membros com contagem de tarefas | Baixa |
 
 ### 5.2. Requisitos Não Funcionais
 
-| ID | Descrição | Categoria |
+| ID | Requisito | Categoria |
 |----|-----------|-----------|
-| RNF01 | O sistema deve ser responsivo para dispositivos móveis | Usabilidade |
-| RNF02 | A interface deve ser intuitiva e de fácil navegação | Usabilidade |
-| RNF03 | O tempo de resposta das operações deve ser inferior a 2 segundos | Performance |
-| RNF04 | O sistema deve utilizar banco de dados SQLite | Tecnologia |
-| RNF05 | O backend deve expor API REST | Arquitetura |
-| RNF06 | O código deve seguir padrões de organização e boas práticas | Manutenibilidade |
-| RNF07 | O sistema deve ter testes automatizados da API | Confiabilidade |
-| RNF08 | O sistema deve validar dados no backend | Segurança |
-| RNF09 | As cores devem facilitar a identificação de prioridades e status | Usabilidade |
-| RNF10 | O sistema deve ser executável com comandos simples (npm start) | Portabilidade |
+| RNF01 | Backend em Node.js com Express e TypeScript | Tecnologia |
+| RNF02 | Persistência em banco relacional SQLite com chaves estrangeiras ativadas | Persistência |
+| RNF03 | Frontend em React 19 com TypeScript, empacotado com Vite | Tecnologia |
+| RNF04 | Interface construída com Tailwind CSS e componentes no padrão shadcn/ui (Radix UI) | Usabilidade |
+| RNF05 | Comunicação entre frontend e backend por API REST com JSON e códigos HTTP adequados | Interoperabilidade |
+| RNF06 | Respostas da API em menos de 500 ms para operações comuns com a base de demonstração | Desempenho |
+| RNF07 | Atualização otimista na interface, com desfazer automático se a API falhar | Usabilidade |
+| RNF08 | Mensagens de erro e de sucesso em português, exibidas em notificações (toast) | Usabilidade |
+| RNF09 | Respeitar a preferência do sistema por redução de movimento (`prefers-reduced-motion`) | Acessibilidade |
+| RNF10 | Testes de integração automatizados cobrindo todas as rotas da API | Qualidade |
+| RNF11 | Banco antigo continua funcionando: colunas novas são adicionadas por migração automática com valor padrão | Manutenibilidade |
+| RNF12 | Código versionado no GitHub com histórico de commits | Manutenibilidade |
 
 ---
 
@@ -155,608 +164,680 @@ A escolha por um sistema de controle de tarefas permite explorar diversos concei
 
 | ID | Regra |
 |----|-------|
-| RN01 | Todo projeto deve ter um nome obrigatório |
-| RN02 | Toda tarefa deve estar associada a um projeto |
-| RN03 | Toda tarefa deve ter um título obrigatório |
-| RN04 | O status de uma tarefa deve ser: "A fazer", "Em andamento" ou "Concluído" |
-| RN05 | A prioridade de uma tarefa deve ser: "Baixa", "Média" ou "Alta" |
-| RN06 | Todo membro deve ter nome e email obrigatórios |
-| RN07 | O email de um membro deve ser único no sistema |
-| RN08 | O email deve seguir formato válido (exemplo@dominio.com) |
-| RN09 | Uma tarefa sem data de entrega não é considerada atrasada |
-| RN10 | Tarefas com status "Concluído" não são consideradas atrasadas |
-| RN11 | Uma tarefa é considerada atrasada quando a data de entrega é anterior à data atual e o status não é "Concluído" |
-| RN12 | Ao excluir um projeto, todas as tarefas associadas devem ser excluídas |
-| RN13 | Ao excluir um membro, suas tarefas atribuídas devem ter o responsável removido (NULL) |
-| RN14 | Uma tarefa pode não ter responsável atribuído |
-| RN15 | Uma tarefa pode não ter data de entrega definida |
+| RN01 | O nome do projeto é obrigatório e não pode ser composto só de espaços. |
+| RN02 | O título da tarefa é obrigatório e toda tarefa deve pertencer a um projeto. |
+| RN03 | O nome e o e-mail do membro são obrigatórios, e o e-mail deve ter formato válido. |
+| RN04 | O e-mail do membro é único no sistema. |
+| RN05 | O status da tarefa só pode ser "A fazer", "Em andamento" ou "Concluído" (padrão: "A fazer"). |
+| RN06 | A prioridade da tarefa só pode ser "Baixa", "Média" ou "Alta" (padrão: "Média"). |
+| RN07 | Ao excluir um projeto, todas as suas tarefas são excluídas (ON DELETE CASCADE). |
+| RN08 | Ao excluir um membro, as tarefas dele ficam sem responsável (ON DELETE SET NULL). |
+| RN09 | Uma tarefa é considerada atrasada quando a data de entrega já passou e o status não é "Concluído". |
+| RN10 | As etiquetas são normalizadas: espaços extras são removidos, valores vazios e repetidos são descartados. |
+| RN11 | Os contadores de checklist e de comentários nunca são negativos; valores inválidos viram zero. |
+| RN12 | Quando emoji, capa ou prazo do projeto não são enviados na edição, os valores atuais são mantidos. Sem emoji, o projeto recebe 📁. |
 
 ---
 
 ## 7. Casos de Uso
 
-### Diagrama de Casos de Uso
+### 7.1. Diagrama de Casos de Uso
+
+O ator principal é o **Membro da equipe**, que usa o sistema para organizar projetos e tarefas.
 
 ```mermaid
-graph TB
-    User((Usuário))
-    
-    User --> UC01[Gerenciar Projetos]
-    User --> UC02[Gerenciar Tarefas]
-    User --> UC03[Gerenciar Membros]
-    User --> UC04[Visualizar Dashboard]
-    User --> UC05[Filtrar Tarefas]
-    User --> UC06[Visualizar Kanban]
-    
-    UC01 --> UC01a[Criar Projeto]
-    UC01 --> UC01b[Editar Projeto]
-    UC01 --> UC01c[Excluir Projeto]
-    UC01 --> UC01d[Listar Projetos]
-    
-    UC02 --> UC02a[Criar Tarefa]
-    UC02 --> UC02b[Editar Tarefa]
-    UC02 --> UC02c[Excluir Tarefa]
-    UC02 --> UC02d[Definir Prioridade]
-    UC02 --> UC02e[Definir Status]
-    UC02 --> UC02f[Atribuir Responsável]
-    
-    UC03 --> UC03a[Criar Membro]
-    UC03 --> UC03b[Editar Membro]
-    UC03 --> UC03c[Excluir Membro]
-    UC03 --> UC03d[Listar Membros]
+flowchart LR
+    U(["👤 Membro da equipe"])
+    subgraph S["Sistema Taskora"]
+        UC01(["UC01 Gerenciar projetos"])
+        UC02(["UC02 Gerenciar tarefas"])
+        UC03(["UC03 Gerenciar membros"])
+        UC04(["UC04 Mover cartão no quadro"])
+        UC05(["UC05 Alternar visualização"])
+        UC06(["UC06 Ver detalhe do cartão"])
+        UC07(["UC07 Filtrar e buscar tarefas"])
+        UC08(["UC08 Consultar painel inicial"])
+        UC09(["UC09 Alternar tema claro/escuro"])
+    end
+    U --- UC01
+    U --- UC02
+    U --- UC03
+    U --- UC04
+    U --- UC05
+    U --- UC06
+    U --- UC07
+    U --- UC08
+    U --- UC09
+    UC04 -. "«include»" .-> UC02
+    UC06 -. "«extend»" .-> UC02
 ```
 
-### Descrição dos Casos de Uso Principais
+### 7.2. Descrição dos Principais Casos de Uso
 
-#### UC01 - Gerenciar Projetos
+**UC01 – Gerenciar projetos**
 
-**Descrição:** Permite ao usuário criar, visualizar, editar e excluir projetos.
+- **Ator:** Membro da equipe.
+- **Fluxo principal:** o usuário clica em "Novo projeto", informa nome, descrição, emoji, capa e prazo e confirma. O sistema valida o nome, grava o projeto e o mostra na barra lateral e na galeria. Na página do projeto, o usuário edita o título, a descrição e o ícone diretamente na tela.
+- **Fluxo alternativo:** nome vazio faz a API responder 400 e a interface mostrar a mensagem de erro.
+- **Pós-condição:** ao excluir o projeto, suas tarefas também são excluídas (RN07).
 
-**Ator:** Usuário
+**UC02 – Gerenciar tarefas**
 
-**Pré-condições:** Nenhuma
+- **Ator:** Membro da equipe.
+- **Fluxo principal:** o usuário clica em "Novo" ou em "Adicionar cartão" em uma lista, preenche título, projeto, status, prioridade, responsável, data de entrega e etiquetas, e cria o cartão. Depois, pelo detalhe do cartão, altera qualquer campo ou exclui a tarefa.
+- **Fluxo alternativo:** título vazio ou status inválido fazem a API responder 400.
 
-**Fluxo Principal:**
-1. Usuário acessa a página de projetos
-2. Sistema exibe lista de projetos cadastrados
-3. Usuário seleciona opção de criar novo projeto
-4. Sistema exibe formulário de cadastro
-5. Usuário preenche nome, descrição e cor
-6. Sistema valida dados e salva projeto
-7. Sistema exibe mensagem de sucesso
+**UC04 – Mover cartão no quadro**
 
-**Fluxo Alternativo - Editar:**
-3a. Usuário seleciona projeto existente
-4a. Sistema exibe detalhes do projeto
-5a. Usuário seleciona opção editar
-6a. Sistema exibe formulário preenchido
-7a. Usuário modifica dados e salva
-8a. Sistema valida e atualiza projeto
+- **Ator:** Membro da equipe.
+- **Pré-condição:** o projeto está na visualização Quadro.
+- **Fluxo principal:** o usuário arrasta um cartão até outra lista. A lista de destino mostra um espaço reservado, e ao soltar o cartão a interface muda o status na hora e envia `PUT /api/tarefas/:id` com o novo status.
+- **Fluxo alternativo:** se a API falhar, o cartão volta para a lista original e aparece uma notificação de erro.
 
-**Fluxo de Exceção:**
-- Se nome estiver vazio, sistema exibe erro "Nome do projeto é obrigatório"
+**UC06 – Ver detalhe do cartão**
 
----
+- **Fluxo principal:** ao clicar em um cartão, abre uma janela com capa, título, lista e projeto, responsável, etiquetas, data de entrega, descrição, barra de progresso do checklist e atividade. A coluna lateral tem os botões "Adicionar ao cartão" (membros, etiquetas, checklist, capa) e "Ações" (mover, prioridade, excluir).
 
-#### UC02 - Gerenciar Tarefas
+**UC08 – Consultar painel inicial**
 
-**Descrição:** Permite ao usuário criar, visualizar, editar e excluir tarefas de um projeto.
-
-**Ator:** Usuário
-
-**Pré-condições:** Deve existir ao menos um projeto cadastrado
-
-**Fluxo Principal:**
-1. Usuário acessa detalhes de um projeto
-2. Sistema exibe quadro Kanban com tarefas
-3. Usuário seleciona opção de nova tarefa
-4. Sistema exibe formulário de cadastro
-5. Usuário preenche título, descrição, status, prioridade, responsável e data
-6. Sistema valida dados e salva tarefa
-7. Sistema atualiza quadro Kanban
-8. Sistema exibe mensagem de sucesso
-
-**Fluxos Alternativos:**
-- Editar tarefa: similar ao fluxo de edição de projetos
-- Mover tarefa de status: usuário clica na tarefa e altera o status
-
-**Fluxos de Exceção:**
-- Se título estiver vazio, sistema exibe erro
-- Se status for inválido, sistema exibe erro
-- Se prioridade for inválida, sistema exibe erro
+- **Fluxo principal:** a tela inicial exibe saudação com a data, quatro indicadores (projetos ativos, em andamento, concluídas e atrasadas), gráfico de rosca por status, gráfico de barras por prioridade, progresso de cada projeto, minhas tarefas agrupadas em Hoje, Atrasadas e Próximas, e os prazos dos próximos sete dias.
 
 ---
 
-#### UC05 - Filtrar Tarefas
+## 8. Arquitetura
 
-**Descrição:** Permite filtrar tarefas exibidas no Kanban por diferentes critérios.
+### 8.1. Visão em Camadas
 
-**Ator:** Usuário
+O sistema segue uma arquitetura cliente-servidor em camadas. O frontend é uma aplicação de página única (SPA) que consome a API REST. Em produção, o próprio servidor Express entrega os arquivos compilados do frontend (`web/dist`), então tudo roda em uma única porta (4321).
 
-**Pré-condições:** Usuário deve estar visualizando um projeto
+```mermaid
+flowchart TB
+    subgraph C["Apresentação: navegador (React 19 + TypeScript)"]
+        P["Páginas<br/>Home, ProjetoPage, Tarefas, Membros, Projetos"]
+        V["Visualizações<br/>BoardView, TableView, ListView, CalendarView"]
+        D["Estado global<br/>DataProvider (lib/data.tsx)"]
+        A["Cliente HTTP<br/>lib/api.ts (fetch)"]
+        P --> V --> D --> A
+    end
+    subgraph SV["Servidor: Node.js + Express 5 + TypeScript"]
+        R["Rotas REST<br/>routes/projetos, tarefas, membros, dashboard"]
+        M["Modelos e regras de negócio<br/>models/Projeto, Tarefa, Membro"]
+        CN["Acesso a dados<br/>database/connection.ts + schema.ts"]
+        R --> M --> CN
+    end
+    DB[("SQLite<br/>database.db")]
+    A -- "HTTP / JSON<br/>/api/*" --> R
+    CN -- "better-sqlite3" --> DB
+```
 
-**Fluxo Principal:**
-1. Usuário acessa quadro Kanban de um projeto
-2. Sistema exibe todas as tarefas do projeto
-3. Usuário seleciona filtro de prioridade
-4. Sistema exibe apenas tarefas com a prioridade selecionada
-5. Usuário pode combinar com outros filtros (responsável, status)
-6. Sistema aplica filtros combinados
+| Camada | Responsabilidade | Arquivos |
+|--------|------------------|----------|
+| Apresentação | Telas, componentes, estado da interface e chamadas HTTP | `web/src/` |
+| Rotas (controladores) | Receber a requisição, chamar o modelo e devolver o código HTTP e o JSON | `src/routes/` |
+| Modelos | Validações e regras de negócio, consultas SQL parametrizadas | `src/models/` |
+| Dados | Conexão única com o banco, criação das tabelas e migração das colunas novas | `src/database/` |
+
+### 8.2. Estrutura de Diretórios
+
+```text
+tarefas-gestor/
+├── src/                      # Backend (TypeScript)
+│   ├── server.ts             # App Express, rotas /api e entrega do web/dist
+│   ├── seed.ts               # Dados de demonstração (7 membros, 5 projetos, 37 tarefas)
+│   ├── database/
+│   │   ├── connection.ts     # Conexão única (singleton) com o SQLite
+│   │   └── schema.ts         # Tabelas, índices e migração de colunas opcionais
+│   ├── models/               # Projeto.ts, Tarefa.ts, Membro.ts
+│   ├── routes/               # projetos.ts, tarefas.ts, membros.ts, dashboard.ts
+│   └── types/index.ts        # Interfaces compartilhadas
+├── test/
+│   └── api.test.ts           # 28 testes de integração (Mocha + Chai + Supertest)
+├── dist/                     # Backend compilado pelo tsc (npm run build)
+├── web/                      # Frontend (React + Vite + TypeScript)
+│   ├── src/
+│   │   ├── App.tsx           # Rotas: /, /projetos, /projetos/:id, /tarefas, /minhas, /membros
+│   │   ├── pages/            # Home, ProjetoPage, Projetos, Tarefas, Membros
+│   │   ├── components/       # Sidebar, Topbar, TaskCard, TaskModal, SearchDialog...
+│   │   │   ├── views/        # BoardView, TableView, ListView, CalendarView
+│   │   │   └── ui/           # button, dialog, dropdown, input (padrão shadcn/ui)
+│   │   └── lib/              # api.ts, data.tsx, theme.ts, ui.ts, utils.ts
+│   ├── tailwind.config.js
+│   └── vite.config.ts        # Proxy /api para localhost:4321 em desenvolvimento
+├── docs/                     # GitHub Pages (index.html e screenshots/)
+├── documentacao/             # Este documento, PDF e roteiro do vídeo
+├── package.json
+└── tsconfig.json
+```
+
+### 8.3. Padrões Utilizados
+
+- **Arquitetura em camadas:** rotas, modelos e acesso a dados ficam separados.
+- **Active Record simplificado:** cada classe de modelo (`ProjetoModel`, `TarefaModel`, `MembroModel`) reúne as operações da sua tabela em métodos estáticos.
+- **Singleton:** `getDatabase()` cria uma única conexão com o banco e a reutiliza.
+- **REST:** recursos identificados por URL e manipulados pelos verbos GET, POST, PUT e DELETE (FIELDING, 2000).
+- **Provider (React Context):** `DataProvider` centraliza projetos, tarefas e membros e expõe funções de atualização para todas as telas.
+- **Atualização otimista:** a interface aplica a mudança antes da resposta da API e desfaz se houver erro.
+- **Componentes reutilizáveis:** os componentes de `components/ui` seguem o padrão do shadcn/ui, montados sobre primitivas acessíveis do Radix UI.
 
 ---
 
-## 8. Diagrama de Classes
+## 9. Tecnologias Utilizadas
+
+### 9.1. Backend
+
+| Tecnologia | Uso |
+|------------|-----|
+| Node.js | Ambiente de execução JavaScript no servidor |
+| TypeScript 7 | Tipagem estática do backend, compilado com `tsc` para `dist/` |
+| Express 5 | Framework web para a API REST e entrega dos arquivos do frontend |
+| better-sqlite3 | Driver síncrono e rápido para o banco SQLite |
+| SQLite | Banco de dados relacional em arquivo (`database.db`) |
+| cors | Liberação de requisições entre origens no desenvolvimento |
+| tsx | Execução direta de TypeScript (`npm run dev`, `npm run seed` e testes) |
+
+### 9.2. Frontend
+
+| Tecnologia | Uso |
+|------------|-----|
+| React 19 | Biblioteca de interface baseada em componentes |
+| TypeScript | Tipagem estática do frontend |
+| Vite 8 | Servidor de desenvolvimento e build de produção |
+| React Router 7 | Navegação entre páginas da SPA |
+| Tailwind CSS 3 | Estilização por classes utilitárias, com modo escuro por classe |
+| shadcn/ui + Radix UI | Componentes acessíveis de botão, diálogo, menu e campos |
+| lucide-react | Biblioteca de ícones |
+| recharts | Gráficos de rosca e de barras do painel inicial |
+| @dnd-kit | Arrastar e soltar dos cartões no quadro Kanban |
+| sonner | Notificações (toast) de sucesso e erro |
+| date-fns | Formatação de datas em português e cálculo de prazos |
+| Inter (Fontsource) | Tipografia da interface |
+
+### 9.3. Testes e Ferramentas
+
+| Ferramenta | Uso |
+|------------|-----|
+| Mocha | Executor de testes, rodando TypeScript via `tsx` |
+| Chai | Asserções (`expect`) |
+| Supertest | Requisições HTTP à API dentro dos testes |
+| oxlint | Análise estática do código do frontend |
+| Git e GitHub | Controle de versão e hospedagem do repositório |
+| GitHub Pages | Página de apresentação do projeto (`docs/`) |
+
+### 9.4. Justificativa das Escolhas
+
+O **TypeScript** nas duas pontas permite descrever as entidades com interfaces (`Projeto`, `Tarefa`, `Membro`) e detectar erros na compilação. O **SQLite** dispensa a instalação de um servidor de banco, o que facilita a correção e a execução do projeto em qualquer computador, sem abrir mão de chaves estrangeiras, restrições CHECK e índices. O **React** com **Tailwind** e **shadcn/ui** permitiu construir uma interface próxima à de ferramentas profissionais com componentes acessíveis e prontos para personalizar, e o **@dnd-kit** oferece arrastar e soltar com suporte a mouse, toque e teclado.
+
+---
+
+## 10. Modelagem de Dados
+
+### 10.1. Diagrama de Classes
 
 ```mermaid
 classDiagram
+    direction LR
     class Projeto {
-        +int id
+        +number id
         +string nome
         +string descricao
         +string cor
-        +datetime criado_em
-        +datetime atualizado_em
-        +getAll()
-        +getById(id)
-        +create(data)
-        +update(id, data)
-        +delete(id)
-        +getWithTaskCount(id)
+        +string emoji
+        +string capa
+        +string prazo
+        +string criado_em
+        +string atualizado_em
     }
-    
     class Tarefa {
-        +int id
-        +int projeto_id
+        +number id
+        +number projeto_id
         +string titulo
         +string descricao
-        +string status
-        +string prioridade
-        +int responsavel_id
-        +date data_entrega
-        +datetime criado_em
-        +datetime atualizado_em
-        +getAll()
-        +getById(id)
-        +getByProjeto(projetoId, filters)
-        +create(data)
-        +update(id, data)
-        +delete(id)
-        +getOverdue()
+        +Status status
+        +Prioridade prioridade
+        +number responsavel_id
+        +string data_entrega
+        +string etiquetas
+        +string capa
+        +number checklist_total
+        +number checklist_feitos
+        +number comentarios
     }
-    
     class Membro {
-        +int id
+        +number id
         +string nome
         +string email
         +string cargo
-        +datetime criado_em
-        +getAll()
-        +getById(id)
-        +create(data)
-        +update(id, data)
-        +delete(id)
-        +getWithTaskCount(id)
+        +string criado_em
     }
-    
-    Projeto "1" --> "*" Tarefa : contém
-    Membro "0..1" --> "*" Tarefa : responsável por
+    class ProjetoModel {
+        +getAll() Projeto[]
+        +getById(id) Projeto
+        +create(data) Projeto
+        +update(id, data) Projeto
+        +delete(id) boolean
+        +getWithTaskCount(id) ProjetoWithStats
+    }
+    class TarefaModel {
+        +getAll(filtros) Tarefa[]
+        +getById(id) Tarefa
+        +create(data) Tarefa
+        +update(id, data) Tarefa
+        +delete(id) boolean
+    }
+    class MembroModel {
+        +getAll() Membro[]
+        +getById(id) Membro
+        +create(data) Membro
+        +update(id, data) Membro
+        +delete(id) boolean
+        +getWithTaskCount(id) MembroWithStats
+    }
+    Projeto "1" *-- "0..*" Tarefa : contém
+    Membro "0..1" o-- "0..*" Tarefa : responsável
+    ProjetoModel ..> Projeto : gerencia
+    TarefaModel ..> Tarefa : gerencia
+    MembroModel ..> Membro : gerencia
 ```
 
----
+`Status` aceita "A fazer", "Em andamento" e "Concluído". `Prioridade` aceita "Baixa", "Média" e "Alta".
 
-## 9. Modelo Entidade-Relacionamento
+### 10.2. Modelo Entidade-Relacionamento
 
 ```mermaid
 erDiagram
-    PROJETOS ||--o{ TAREFAS : "possui"
-    MEMBROS ||--o{ TAREFAS : "é responsável por"
-    
+    PROJETOS ||--o{ TAREFAS : "contém"
+    MEMBROS |o--o{ TAREFAS : "é responsável por"
     PROJETOS {
-        int id PK
-        string nome
-        string descricao
-        string cor
-        datetime criado_em
-        datetime atualizado_em
+        INTEGER id PK
+        TEXT nome "NOT NULL"
+        TEXT descricao
+        TEXT cor "padrão #3B82F6"
+        TEXT emoji "opcional, padrão 📁"
+        TEXT capa "opcional"
+        DATE prazo "opcional"
+        DATETIME criado_em
+        DATETIME atualizado_em
     }
-    
     TAREFAS {
-        int id PK
-        int projeto_id FK
-        string titulo
-        string descricao
-        string status
-        string prioridade
-        int responsavel_id FK
-        date data_entrega
-        datetime criado_em
-        datetime atualizado_em
+        INTEGER id PK
+        INTEGER projeto_id FK "NOT NULL, CASCADE"
+        TEXT titulo "NOT NULL"
+        TEXT descricao
+        TEXT status "CHECK, padrão A fazer"
+        TEXT prioridade "CHECK, padrão Média"
+        INTEGER responsavel_id FK "SET NULL"
+        DATE data_entrega
+        TEXT etiquetas "opcional"
+        TEXT capa "opcional"
+        INTEGER checklist_total "opcional, padrão 0"
+        INTEGER checklist_feitos "opcional, padrão 0"
+        INTEGER comentarios "opcional, padrão 0"
+        DATETIME criado_em
+        DATETIME atualizado_em
     }
-    
     MEMBROS {
-        int id PK
-        string nome
-        string email UK
-        string cargo
-        datetime criado_em
+        INTEGER id PK
+        TEXT nome "NOT NULL"
+        TEXT email "UNIQUE, NOT NULL"
+        TEXT cargo
+        DATETIME criado_em
     }
 ```
 
-### Descrição das Entidades
+### 10.3. Dicionário de Dados
 
-**PROJETOS**
-- Armazena informações dos projetos
-- Cada projeto pode ter múltiplas tarefas
-- Campo `cor` personaliza a visualização
+**Tabela `projetos`**
 
-**TAREFAS**
-- Representa as atividades a serem realizadas
-- Relacionamento obrigatório com projeto (CASCADE DELETE)
-- Relacionamento opcional com membro responsável (SET NULL)
-- Status restrito a: "A fazer", "Em andamento", "Concluído"
-- Prioridade restrita a: "Baixa", "Média", "Alta"
+| Coluna | Tipo | Restrição | Descrição |
+|--------|------|-----------|-----------|
+| id | INTEGER | PK, AUTOINCREMENT | Identificador |
+| nome | TEXT | NOT NULL | Nome do projeto |
+| descricao | TEXT | | Descrição |
+| cor | TEXT | DEFAULT '#3B82F6' | Cor de destaque |
+| emoji | TEXT | DEFAULT '📁' (opcional) | Ícone da página |
+| capa | TEXT | opcional | Chave da capa em degradê (ex.: aurora, oceano) |
+| prazo | DATE | opcional | Prazo final do projeto |
+| criado_em / atualizado_em | DATETIME | DEFAULT CURRENT_TIMESTAMP | Datas de controle |
 
-**MEMBROS**
-- Armazena dados dos membros da equipe
-- Email único para identificação
-- Pode ser responsável por múltiplas tarefas
+**Tabela `tarefas`**
 
----
+| Coluna | Tipo | Restrição | Descrição |
+|--------|------|-----------|-----------|
+| id | INTEGER | PK, AUTOINCREMENT | Identificador |
+| projeto_id | INTEGER | FK projetos(id), NOT NULL, ON DELETE CASCADE | Projeto da tarefa |
+| titulo | TEXT | NOT NULL | Título do cartão |
+| descricao | TEXT | | Descrição detalhada |
+| status | TEXT | CHECK (A fazer, Em andamento, Concluído) | Lista do quadro |
+| prioridade | TEXT | CHECK (Baixa, Média, Alta) | Prioridade |
+| responsavel_id | INTEGER | FK membros(id), ON DELETE SET NULL | Responsável |
+| data_entrega | DATE | | Data de entrega |
+| etiquetas | TEXT | DEFAULT '' (opcional) | Etiquetas separadas por vírgula |
+| capa | TEXT | opcional | Cor da capa do cartão |
+| checklist_total | INTEGER | DEFAULT 0 (opcional) | Itens do checklist |
+| checklist_feitos | INTEGER | DEFAULT 0 (opcional) | Itens concluídos |
+| comentarios | INTEGER | DEFAULT 0 (opcional) | Contador de comentários |
+| criado_em / atualizado_em | DATETIME | DEFAULT CURRENT_TIMESTAMP | Datas de controle |
 
-## 10. Arquitetura
+**Tabela `membros`**
 
-### Arquitetura do Sistema
+| Coluna | Tipo | Restrição | Descrição |
+|--------|------|-----------|-----------|
+| id | INTEGER | PK, AUTOINCREMENT | Identificador |
+| nome | TEXT | NOT NULL | Nome completo |
+| email | TEXT | UNIQUE, NOT NULL | E-mail |
+| cargo | TEXT | | Cargo na equipe |
+| criado_em | DATETIME | DEFAULT CURRENT_TIMESTAMP | Data de cadastro |
 
-O sistema segue o padrão de arquitetura em camadas (Layered Architecture) com separação clara de responsabilidades:
-
-```
-┌─────────────────────────────────────────┐
-│         CAMADA DE APRESENTAÇÃO          │
-│   (HTML, CSS, JavaScript - Frontend)    │
-└─────────────────────────────────────────┘
-                    ↓ HTTP/REST
-┌─────────────────────────────────────────┐
-│         CAMADA DE APLICAÇÃO             │
-│     (Express.js - Rotas/Controllers)    │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│         CAMADA DE NEGÓCIO               │
-│        (Models - Lógica de Negócio)     │
-└─────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────┐
-│         CAMADA DE DADOS                 │
-│      (SQLite - Persistência)            │
-└─────────────────────────────────────────┘
-```
-
-### Estrutura de Diretórios
-
-```
-tarefas-gestor/
-├── src/
-│   ├── database/
-│   │   ├── schema.js          # Definição do schema do banco
-│   │   └── connection.js      # Gerenciamento de conexão
-│   ├── models/
-│   │   ├── Projeto.js         # Model de Projeto
-│   │   ├── Tarefa.js          # Model de Tarefa
-│   │   └── Membro.js          # Model de Membro
-│   ├── routes/
-│   │   ├── projetos.js        # Rotas de projetos
-│   │   ├── tarefas.js         # Rotas de tarefas
-│   │   ├── membros.js         # Rotas de membros
-│   │   └── dashboard.js       # Rotas do dashboard
-│   ├── server.js              # Configuração do servidor
-│   └── seed.js                # Script de dados de exemplo
-├── public/
-│   ├── index.html             # Página principal
-│   ├── css/
-│   │   └── style.css          # Estilos
-│   └── js/
-│       └── app.js             # Lógica do frontend
-├── test/
-│   └── api.test.js            # Testes da API
-├── docs/
-│   └── index.html             # Landing page (GitHub Pages)
-├── documentacao/
-│   ├── documentacao.md        # Este documento
-│   └── roteiro-video.md       # Roteiro para vídeo
-├── package.json
-└── README.md
-```
-
-### Padrões Utilizados
-
-**MVC (Model-View-Controller):**
-- Models: Camada de acesso a dados e lógica de negócio
-- Views: Interface do usuário (HTML/CSS/JS)
-- Controllers: Rotas que intermediam requisições
-
-**Repository Pattern:**
-- Models encapsulam acesso ao banco de dados
-- Métodos reutilizáveis para operações CRUD
-
-**RESTful API:**
-- Endpoints seguem convenções REST
-- Verbos HTTP apropriados (GET, POST, PUT, DELETE)
-- Respostas em JSON
+Os índices `idx_tarefas_projeto`, `idx_tarefas_status` e `idx_tarefas_responsavel` aceleram os filtros mais usados. As colunas marcadas como opcionais foram criadas na segunda versão do sistema. A função `migrateOptionalColumns` em `schema.ts` verifica as colunas existentes com `PRAGMA table_info` e adiciona as que faltam com `ALTER TABLE`, então um banco da primeira versão continua funcionando.
 
 ---
 
-## 11. Tecnologias Utilizadas
+## 11. Diagrama de Sequência: Mover um Cartão
 
-### Backend
+O diagrama mostra o que acontece quando o usuário arrasta um cartão da lista "A fazer" para "Em andamento".
 
-| Tecnologia | Versão | Propósito |
-|------------|--------|-----------|
-| Node.js | 18+ | Ambiente de execução JavaScript/TypeScript |
-| TypeScript | 7.0+ | Superset tipado, maior segurança e manutenibilidade |
-| Express | 5.3+ | Framework web para criação de APIs REST |
-| better-sqlite3 | 13.2+ | Driver SQLite síncrono para Node.js |
-| cors | 2.8+ | Middleware para CORS |
-| tsx | 4.23+ | Execução de TypeScript com hot-reload |
+```mermaid
+sequenceDiagram
+    actor U as Usuário
+    participant B as BoardView (@dnd-kit)
+    participant D as DataProvider
+    participant A as lib/api.ts
+    participant R as Rota PUT /api/tarefas/:id
+    participant M as TarefaModel
+    participant DB as SQLite
 
-### Frontend
-
-| Tecnologia | Versão | Propósito |
-|------------|--------|-----------|
-| React | 19+ | Biblioteca para construção de interfaces reativas |
-| Vite | 8+ | Build tool e dev server ultrarrápido |
-| TypeScript | 7.0+ | Tipagem estática para JavaScript |
-| Tailwind CSS | 3.4+ | Framework CSS utility-first para estilização rápida |
-| shadcn/ui | - | Componentes acessíveis baseados em Radix UI |
-| Lucide React | - | Biblioteca de ícones modernos |
-| Recharts | - | Biblioteca de gráficos para React |
-| @dnd-kit | - | Drag-and-drop para quadro Kanban |
-| Sonner | - | Toast notifications elegantes |
-| React Router | 7+ | Roteamento SPA |
-
-### Testes
-
-| Tecnologia | Versão | Propósito |
-|------------|--------|-----------|
-| Mocha | 12+ | Framework de testes |
-| Chai | 6+ | Biblioteca de asserções BDD/TDD |
-| Supertest | 7+ | Testes de integração HTTP |
-
-### Ferramentas de Desenvolvimento
-
-- Git/GitHub: Controle de versão e colaboração
-- TypeScript: Desenvolvimento com type-safety
-- Visual Studio Code: Editor de código com suporte TypeScript
-- GitHub Pages: Hospedagem da landing page
-- npm: Gerenciamento de dependências
-
-### Justificativa das Escolhas
-
-**TypeScript:** Adiciona tipagem estática ao JavaScript, reduzindo erros em tempo de desenvolvimento, melhorando a manutenibilidade e fornecendo melhor suporte de IDE através de IntelliSense.
-
-**React + Vite:** React oferece componentes reutilizáveis e arquitetura declarativa. Vite proporciona desenvolvimento rápido com hot-module replacement instantâneo e builds otimizados.
-
-**Tailwind CSS + shadcn/ui:** Tailwind permite estilização rápida com classes utilitárias. shadcn/ui fornece componentes prontos e acessíveis baseados em Radix UI, acelerando o desenvolvimento com qualidade profissional.
-
-**Node.js + Express + TypeScript:** Stack JavaScript/TypeScript full-stack, compartilhando tipos entre frontend e backend, facilitando manutenção e reduzindo erros de integração.
-
-**SQLite + better-sqlite3:** Banco de dados embarcado, sem necessidade de servidor separado, API síncrona simplificada, ideal para desenvolvimento e demonstração do sistema.
-
-**@dnd-kit:** Biblioteca moderna de drag-and-drop com ótima experiência de desenvolvedor, acessibilidade nativa e performance otimizada para o quadro Kanban.
-
-**Recharts:** Integração nativa com React, gráficos responsivos e customizáveis para visualização de dados no dashboard.
+    U->>B: Arrasta o cartão e solta em "Em andamento"
+    B->>B: onDragEnd identifica a lista de destino
+    B->>D: updateTarefa(id, { status: "Em andamento" })
+    D->>D: Atualização otimista (cartão já aparece na nova lista)
+    D->>A: api.tarefas.update(id, dados)
+    A->>R: PUT /api/tarefas/:id (JSON)
+    R->>M: TarefaModel.update(id, dados)
+    M->>DB: UPDATE tarefas SET status = ?, atualizado_em = CURRENT_TIMESTAMP
+    DB-->>M: OK (ou erro de CHECK)
+    M->>DB: SELECT da tarefa com projeto e responsável
+    DB-->>M: Tarefa atualizada
+    M-->>R: Tarefa
+    R-->>A: 200 OK + JSON
+    A-->>D: Tarefa atualizada
+    D-->>B: Estado confirmado
+    alt Falha na API (400/500)
+        A-->>D: Erro
+        D->>D: Restaura o estado anterior
+        D-->>U: Notificação de erro (sonner)
+    end
+```
 
 ---
 
-## 12. Protótipo e Telas
+## 12. API REST
 
-### Dashboard
+Todas as rotas usam o prefixo `/api`, recebem e devolvem JSON.
 
-Exibe visão geral do sistema com:
-- Cards de estatísticas (projetos, tarefas, membros, atrasadas)
-- Contadores por status (A fazer, Em andamento, Concluído)
-- Lista de tarefas atrasadas
+| Método | Rota | Descrição | Respostas |
+|--------|------|-----------|-----------|
+| GET | `/api/dashboard` | Totais de projetos, membros e tarefas, tarefas por status, atrasadas e por prioridade | 200 |
+| GET | `/api/projetos` | Lista os projetos (mais recentes primeiro) | 200 |
+| GET | `/api/projetos/:id` | Busca um projeto com estatísticas das tarefas | 200, 404 |
+| POST | `/api/projetos` | Cria um projeto | 201, 400 |
+| PUT | `/api/projetos/:id` | Atualiza um projeto | 200, 400, 404 |
+| DELETE | `/api/projetos/:id` | Exclui o projeto e suas tarefas | 204, 404 |
+| GET | `/api/tarefas` | Lista tarefas, com filtros opcionais `projeto_id`, `responsavel_id`, `status` e `prioridade` | 200 |
+| GET | `/api/tarefas/atrasadas/lista` | Lista as tarefas atrasadas, ordenadas por data de entrega | 200 |
+| GET | `/api/tarefas/:id` | Busca uma tarefa com nome do projeto e do responsável | 200, 404 |
+| POST | `/api/tarefas` | Cria uma tarefa | 201, 400 |
+| PUT | `/api/tarefas/:id` | Atualiza só os campos enviados (atualização parcial) | 200, 400, 404 |
+| DELETE | `/api/tarefas/:id` | Exclui uma tarefa | 204, 404 |
+| GET | `/api/membros` | Lista os membros em ordem alfabética | 200 |
+| GET | `/api/membros/:id` | Busca um membro com estatísticas das tarefas | 200, 404 |
+| POST | `/api/membros` | Cria um membro | 201, 400 |
+| PUT | `/api/membros/:id` | Atualiza um membro | 200, 400, 404 |
+| DELETE | `/api/membros/:id` | Exclui um membro (as tarefas ficam sem responsável) | 204, 404 |
 
-### Listagem de Projetos
+Exemplo de criação de tarefa:
 
-- Grid responsivo de cards de projetos
-- Cada card mostra nome, descrição e cor personalizada
-- Botão para criar novo projeto
+```http
+POST /api/tarefas
+Content-Type: application/json
 
-### Visualização de Projeto (Kanban)
-
-- Nome e descrição do projeto
-- Filtros por status, prioridade e responsável
-- Três colunas Kanban: "A fazer", "Em andamento", "Concluído"
-- Cards de tarefas com título, prioridade, responsável e data
-- Botões para editar projeto e criar nova tarefa
-
-### Listagem de Membros
-
-- Grid de cards de membros
-- Avatar com iniciais
-- Nome, email e cargo
-- Botões para editar e excluir
-
-### Modais
-
-- Modal de criação/edição de projeto
-- Modal de criação/edição de tarefa
-- Modal de criação/edição de membro
-
-### Elementos de UI
-
-- Paleta de cores consistente
-- Badges coloridos para prioridades (Baixa: azul, Média: amarelo, Alta: vermelho)
-- Mensagens toast para feedback de ações
-- Design responsivo para mobile
+{
+  "projeto_id": 1,
+  "titulo": "API de matrículas e disciplinas",
+  "status": "Em andamento",
+  "prioridade": "Alta",
+  "responsavel_id": 3,
+  "data_entrega": "2026-11-17",
+  "etiquetas": ["backend", "api"],
+  "checklist_total": 6,
+  "checklist_feitos": 3
+}
+```
 
 ---
 
-## 13. Plano de Testes
+## 13. Interface e Telas
 
-### Estratégia de Testes
+As capturas abaixo foram feitas com os dados de demonstração criados pelo comando `npm run seed`.
 
-O sistema implementa testes automatizados de integração da API REST, validando todas as operações CRUD e regras de negócio.
+### 13.1. Início (painel)
 
-### Casos de Teste Implementados
+![Tela inicial com indicadores, gráficos, minhas tarefas e prazos da semana](../docs/screenshots/home-light.png)
 
-#### Testes de Projetos
+*Figura 1 – Tela inicial: indicadores, gráfico de tarefas por status, gráfico por prioridade, progresso dos projetos, minhas tarefas e prazos da semana.*
 
-| ID | Caso de Teste | Resultado Esperado |
-|----|---------------|-------------------|
-| TP01 | Criar projeto válido | Status 201, retorna projeto com ID |
-| TP02 | Criar projeto sem nome | Status 400, mensagem de erro |
-| TP03 | Listar projetos | Status 200, retorna array de projetos |
-| TP04 | Buscar projeto por ID | Status 200, retorna projeto com stats |
-| TP05 | Atualizar projeto | Status 200, dados atualizados |
-| TP06 | Deletar projeto | Status 204 |
+### 13.2. Página do Projeto: Quadro Kanban
 
-#### Testes de Membros
+![Página do projeto com capa, ícone, propriedades e quadro Kanban](../docs/screenshots/projeto-quadro.png)
 
-| ID | Caso de Teste | Resultado Esperado |
-|----|---------------|-------------------|
-| TM01 | Criar membro válido | Status 201, retorna membro com ID |
-| TM02 | Criar membro com email inválido | Status 400, erro "Email inválido" |
-| TM03 | Criar membro com email duplicado | Status 400, erro "Email já cadastrado" |
-| TM04 | Listar membros | Status 200, retorna array de membros |
-| TM05 | Buscar membro por ID | Status 200, retorna membro com stats |
-| TM06 | Atualizar membro | Status 200, dados atualizados |
+*Figura 2 – Página do projeto no estilo Notion (capa, emoji, status, membros, prazo e progresso) com o quadro Kanban no estilo Trello.*
 
-#### Testes de Tarefas
+### 13.3. Arrastando um Cartão
 
-| ID | Caso de Teste | Resultado Esperado |
-|----|---------------|-------------------|
-| TT01 | Criar tarefa válida | Status 201, retorna tarefa com ID |
-| TT02 | Criar tarefa sem título | Status 400, mensagem de erro |
-| TT03 | Criar tarefa com status inválido | Status 400, erro "Status inválido" |
-| TT04 | Listar tarefas | Status 200, retorna array de tarefas |
-| TT05 | Filtrar tarefas por projeto | Status 200, apenas tarefas do projeto |
-| TT06 | Filtrar tarefas por prioridade | Status 200, apenas prioridade filtrada |
-| TT07 | Buscar tarefa por ID | Status 200, retorna tarefa |
-| TT08 | Atualizar tarefa | Status 200, dados atualizados |
-| TT09 | Listar tarefas atrasadas | Status 200, apenas atrasadas |
-| TT10 | Deletar tarefa | Status 204 |
+![Cartão sendo arrastado entre listas do quadro](../docs/screenshots/quadro-arrastando.png)
 
-#### Testes de Dashboard
+*Figura 3 – Cartão sendo arrastado para outra lista, com espaço reservado no destino.*
 
-| ID | Caso de Teste | Resultado Esperado |
-|----|---------------|-------------------|
-| TD01 | Buscar estatísticas gerais | Status 200, retorna todas as métricas |
+### 13.4. Detalhe do Cartão
 
-### Execução dos Testes
+![Janela de detalhe do cartão](../docs/screenshots/cartao-detalhe.png)
+
+*Figura 4 – Detalhe do cartão com responsável, etiquetas, data de entrega, descrição, checklist, atividade e ações.*
+
+### 13.5. Visualização em Tabela
+
+![Tarefas do projeto em tabela](../docs/screenshots/projeto-tabela.png)
+
+*Figura 5 – Visualização em tabela com status, prioridade, responsável, etiquetas, entrega e checklist.*
+
+### 13.6. Visualização em Calendário
+
+![Tarefas em calendário mensal](../docs/screenshots/calendario.png)
+
+*Figura 6 – Calendário mensal com as tarefas posicionadas pela data de entrega.*
+
+### 13.7. Modo Escuro
+
+![Quadro do projeto no modo escuro](../docs/screenshots/projeto-quadro-dark.png)
+
+*Figura 7 – O mesmo quadro no modo escuro.*
+
+Outras capturas (todas as tarefas, membros e início no modo escuro) estão na pasta `docs/screenshots/` do repositório.
+
+---
+
+## 14. Plano de Testes
+
+### 14.1. Estratégia
+
+Foram implementados **testes de integração** da API com Mocha, Chai e Supertest, escritos em TypeScript e executados pelo `tsx`. Cada teste faz uma requisição HTTP real ao aplicativo Express e verifica o código de resposta e o conteúdo JSON. Os testes usam um banco separado (`database-test.db`, definido pela variável `DATABASE_PATH`) e a variável `NODE_ENV=test`, que impede o servidor de abrir a porta. Assim o banco principal nunca é alterado.
+
+O frontend foi validado com testes manuais exploratórios de cada tela (criação, edição, exclusão, arrastar e soltar, filtros, busca e tema), além da verificação de tipos do TypeScript no build (`tsc -b`).
+
+### 14.2. Casos de Teste Implementados (28)
+
+| Nº | Grupo | Caso de teste | Resultado esperado |
+|----|-------|---------------|--------------------|
+| 1 | Projetos | POST /api/projetos cria um novo projeto | 201 com id |
+| 2 | Projetos | POST /api/projetos com nome vazio | 400 |
+| 3 | Projetos | GET /api/projetos lista todos os projetos | 200 com lista |
+| 4 | Projetos | GET /api/projetos/:id retorna um projeto | 200 |
+| 5 | Projetos | PUT /api/projetos/:id atualiza um projeto | 200 com dados novos |
+| 6 | Projetos | DELETE /api/projetos/:id exclui um projeto | 204 |
+| 7 | Membros | POST /api/membros cria um novo membro | 201 |
+| 8 | Membros | POST /api/membros com e-mail inválido | 400 |
+| 9 | Membros | POST /api/membros com e-mail duplicado | 400 |
+| 10 | Membros | GET /api/membros lista todos os membros | 200 |
+| 11 | Membros | GET /api/membros/:id retorna um membro | 200 |
+| 12 | Membros | PUT /api/membros/:id atualiza um membro | 200 |
+| 13 | Tarefas | POST /api/tarefas cria uma nova tarefa | 201 |
+| 14 | Tarefas | POST /api/tarefas com título vazio | 400 |
+| 15 | Tarefas | POST /api/tarefas com status inválido | 400 |
+| 16 | Tarefas | GET /api/tarefas lista todas as tarefas | 200 |
+| 17 | Tarefas | GET /api/tarefas?projeto_id filtra por projeto | 200, só o projeto pedido |
+| 18 | Tarefas | GET /api/tarefas?prioridade filtra por prioridade | 200, só a prioridade pedida |
+| 19 | Tarefas | GET /api/tarefas/:id retorna uma tarefa | 200 |
+| 20 | Tarefas | PUT /api/tarefas/:id atualiza uma tarefa | 200 |
+| 21 | Tarefas | GET /api/tarefas/atrasadas/lista retorna as atrasadas | 200 |
+| 22 | Tarefas | DELETE /api/tarefas/:id exclui uma tarefa | 204 |
+| 23 | Campos opcionais | POST /api/projetos sem campos opcionais usa os valores padrão | 201, emoji 📁 |
+| 24 | Campos opcionais | POST /api/projetos salva emoji, capa e prazo | 201 com os valores |
+| 25 | Campos opcionais | PUT /api/projetos/:id mantém emoji e capa quando não enviados | 200, valores mantidos |
+| 26 | Campos opcionais | POST /api/tarefas normaliza etiquetas e salva o checklist | 201, etiquetas sem repetição |
+| 27 | Campos opcionais | PUT /api/tarefas/:id atualiza etiquetas sem alterar outros campos | 200 |
+| 28 | Dashboard | GET /api/dashboard retorna as estatísticas gerais | 200 com totais |
+
+### 14.3. Execução
 
 ```bash
 npm test
 ```
 
-### Cobertura
-
-Os testes cobrem:
-- ✅ Todas as operações CRUD
-- ✅ Validações de dados obrigatórios
-- ✅ Validações de formato (email)
-- ✅ Validações de valores permitidos (status, prioridade)
-- ✅ Unicidade (email duplicado)
-- ✅ Filtros e consultas especializadas
-- ✅ Estatísticas e agregações
+Resultado obtido: **28 testes passando** (`28 passing`). As mensagens de erro que aparecem no console durante a execução são esperadas, porque vêm dos testes que enviam dados inválidos de propósito.
 
 ---
 
-## 14. Análise de Falhas e Riscos (FMEA)
+## 15. Análise de Falhas e Riscos (FMEA)
 
-| Modo de Falha | Efeito | Severidade | Causa | Ocorrência | Detecção | RPN | Ação Preventiva |
-|---------------|--------|------------|-------|------------|----------|-----|-----------------|
-| Banco de dados corrompido | Perda de dados | 9 | Desligamento abrupto | 3 | 2 | 54 | Backups regulares, transações |
-| Validação incorreta de email | Dados inválidos | 5 | Regex incompleto | 2 | 8 | 80 | Regex robusto, testes unitários |
-| Email duplicado | Erro ao cadastrar | 4 | Falta de constraint | 2 | 9 | 72 | Constraint UNIQUE, validação |
-| Status inválido | Inconsistência | 6 | Dados externos | 3 | 8 | 144 | Validação com ENUM/CHECK |
-| Tarefa sem projeto | Órfão no banco | 7 | Deleção incorreta | 2 | 7 | 98 | Foreign key CASCADE |
-| Filtros não funcionam | UX ruim | 3 | Erro de lógica | 4 | 6 | 72 | Testes de filtros |
-| Interface não responsiva | Inacessível mobile | 5 | CSS inadequado | 3 | 5 | 75 | Media queries, testes mobile |
-| API lenta | Timeout | 6 | Queries ineficientes | 3 | 6 | 108 | Índices, otimização |
-| Mensagens de erro genéricas | Confusão do usuário | 4 | Tratamento inadequado | 5 | 4 | 80 | Try-catch específicos |
-| Perda de conexão com API | Sistema inacessível | 8 | Falha de rede | 2 | 3 | 48 | Retry logic, mensagens claras |
+| Modo de falha | Efeito | S | Causa | O | D | RPN | Ação preventiva |
+|---------------|--------|---|-------|---|---|-----|-----------------|
+| Status inválido gravado | Cartão some do quadro | 6 | Dados enviados direto à API | 3 | 2 | 36 | CHECK no banco e teste nº 15 |
+| E-mail duplicado ou inválido | Cadastro inconsistente | 5 | Falta de validação | 3 | 2 | 30 | UNIQUE, regex no modelo e testes nº 8 e 9 |
+| Tarefa órfã | Dado sem projeto | 7 | Exclusão de projeto | 2 | 3 | 42 | Chave estrangeira com ON DELETE CASCADE |
+| Banco antigo sem colunas novas | Erro ao abrir o sistema | 8 | Atualização de versão | 4 | 3 | 96 | Migração automática em `migrateOptionalColumns` |
+| Falha ao mover cartão | Quadro diferente do banco | 6 | Erro de rede ou da API | 3 | 4 | 72 | Atualização otimista com restauração e toast de erro |
+| Cartão solto fora de uma lista | Movimento perdido | 3 | Precisão do mouse | 5 | 3 | 45 | Detecção de colisão por ponteiro e por retângulo |
+| Etiquetas repetidas ou vazias | Visual poluído | 3 | Entrada livre do usuário | 6 | 2 | 36 | Normalização em `normalizeEtiquetas` e teste nº 26 |
+| Perda do arquivo do banco | Perda de dados | 9 | Exclusão acidental | 2 | 7 | 126 | Backup do `database.db` e `npm run seed` para recriar a demonstração |
+| Testes alterando dados reais | Perda dos dados de demonstração | 7 | Mesmo banco nos testes | 2 | 5 | 70 | Banco separado `database-test.db` via `DATABASE_PATH` |
+| Uso sem autenticação | Qualquer pessoa altera dados | 7 | Fora do escopo | 5 | 4 | 140 | Uso local e autenticação prevista como trabalho futuro |
+| Erro de tipo entre front e back | Campo exibido errado | 5 | Contratos diferentes | 3 | 3 | 45 | Interfaces TypeScript nos dois lados e build com `tsc` |
 
-**Legenda:**
-- Severidade (S): 1-10 (1: insignificante, 10: catastrófico)
-- Ocorrência (O): 1-10 (1: improvável, 10: frequente)
-- Detecção (D): 1-10 (1: alta detecção, 10: não detectável)
-- RPN: Risk Priority Number (S × O × D)
+**Legenda:** S = severidade, O = ocorrência, D = detecção (1 a 10). RPN = S × O × D.
 
-### Riscos Prioritários (RPN > 100)
+**Riscos prioritários (RPN acima de 100):**
 
-1. **Status inválido (RPN 144):** Mitigado com validações CHECK no banco e no backend
-2. **API lenta (RPN 108):** Mitigado com índices nas foreign keys e campos filtráveis
+1. **Uso sem autenticação (140):** aceito nesta versão, porque o sistema é de uso local. A autenticação é o primeiro item dos trabalhos futuros.
+2. **Perda do arquivo do banco (126):** mitigada com cópias de segurança do `database.db` e com o script de seed, que recria a base de demonstração.
 
 ---
 
-## 15. Cronograma
+## 16. Como Executar
 
-| Fase | Atividades | Duração | Status |
-|------|-----------|---------|--------|
-| 1. Planejamento | Definição de requisitos, casos de uso | 1 semana | ✅ Concluído |
-| 2. Modelagem | Diagrama ER, diagrama de classes | 1 semana | ✅ Concluído |
-| 3. Backend | Banco de dados, models, API | 2 semanas | ✅ Concluído |
-| 4. Frontend | Interface, integração com API | 2 semanas | ✅ Concluído |
-| 5. Testes | Testes automatizados, correções | 1 semana | ✅ Concluído |
-| 6. Documentação | Documento técnico, README, roteiro | 1 semana | ✅ Concluído |
-| 7. Apresentação | Vídeo de demonstração, defesa | 1 semana | 📅 Planejado |
+**Pré-requisitos:** Node.js 20 ou superior, npm e Git.
 
-**Prazo Total:** 9 semanas
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/joaogpnfs/tarefas-gestor.git
+cd tarefas-gestor
+
+# 2. Instalar as dependências do backend e do frontend
+npm install
+cd web && npm install && cd ..
+
+# 3. Compilar o backend e o frontend
+npm run build
+cd web && npm run build && cd ..
+
+# 4. Criar o banco com os dados de demonstração
+npm run seed
+
+# 5. Iniciar o servidor
+npm start
+```
+
+Depois é só abrir **http://localhost:4321** no navegador.
+
+Outros comandos:
+
+| Comando | Função |
+|---------|--------|
+| `npm test` | Executa os 28 testes de integração |
+| `npm run dev` | Inicia o backend direto do TypeScript |
+| `cd web && npm run dev` | Inicia o frontend em modo de desenvolvimento (Vite), com proxy para a API |
+
+**Links do projeto:**
+
+- Repositório: https://github.com/joaogpnfs/tarefas-gestor
+- Página do projeto (GitHub Pages): https://joaogpnfs.github.io/tarefas-gestor/
 
 ---
 
-## 16. Conclusão
+## 17. Cronograma
 
-O Sistema de Controle de Tarefas e Projetos foi desenvolvido com sucesso, atendendo todos os requisitos propostos pela disciplina. O projeto demonstra a aplicação prática de conceitos fundamentais de engenharia de software:
+| Fase | Atividades | Status |
+|------|------------|--------|
+| 1. Planejamento | Tema, requisitos, regras de negócio e casos de uso | Concluído |
+| 2. Modelagem | Diagrama de classes, modelo ER e arquitetura | Concluído |
+| 3. Backend | Banco SQLite, modelos, rotas e testes da API | Concluído |
+| 4. Primeira interface | Versão inicial em JavaScript puro (tag `v1.0-vanilla`) | Concluído |
+| 5. Migração para TypeScript | Backend e testes em TypeScript, frontend em React | Concluído |
+| 6. Nova interface | Inspiração Notion e Trello, quatro visualizações, detalhe do cartão | Concluído |
+| 7. Documentação | Documento técnico, README, página do projeto e roteiro | Concluído |
+| 8. Defesa | Gravação e entrega do vídeo de defesa | Planejado |
 
-- **Arquitetura em camadas:** Separação clara de responsabilidades entre apresentação, lógica de negócio e dados
-- **API RESTful:** Comunicação padronizada entre frontend e backend
-- **Persistência de dados:** Modelagem relacional com integridade referencial
-- **Interface de usuário:** Design responsivo e intuitivo
-- **Qualidade de software:** Validações, tratamento de erros e testes automatizados
+---
 
-O sistema oferece funcionalidades completas de CRUD para as três entidades principais (projetos, tarefas e membros), visualização em quadro Kanban, filtros diversos e dashboard com métricas relevantes.
+## 18. Conclusão
 
-A experiência de desenvolvimento proporcionou aprendizado significativo sobre o ciclo completo de criação de um sistema web, desde a concepção e modelagem até a implementação e testes, preparando o estudante para desafios reais do mercado de desenvolvimento de software.
+O Taskora atende aos requisitos das disciplinas: tem tema livre bem definido, banco de dados relacional, CRUD completo das três entidades, documentação com modelagem e testes automatizados, e está versionado no GitHub. Além do mínimo pedido, o sistema oferece quatro formas de ver as tarefas, arrastar e soltar no quadro, painel com gráficos e modo escuro.
+
+O projeto passou por uma evolução que também foi uma lição de engenharia de software. A primeira versão, em JavaScript puro, foi preservada na tag `v1.0-vanilla`, e a migração para TypeScript e React foi feita mantendo os testes da API passando a cada etapa. Isso mostrou na prática o valor dos testes automatizados como rede de segurança em uma refatoração grande, e o valor da tipagem para manter frontend e backend falando a mesma língua.
 
 ### Trabalhos Futuros
 
-Possíveis melhorias para versões futuras:
-- Sistema de autenticação e autorização de usuários
-- Drag-and-drop para reorganizar tarefas no Kanban
-- Comentários e anexos em tarefas
-- Notificações de prazos próximos
-- Relatórios e gráficos de produtividade
-- Integração com ferramentas externas (Slack, GitHub)
-- Histórico de alterações (audit log)
-- Subtarefas e checklists
-- Labels e tags customizáveis
+- Autenticação de usuários e permissões por projeto.
+- Comentários com texto, anexos e itens de checklist individuais.
+- Ordenação manual dos cartões dentro da mesma lista.
+- Notificações de prazos próximos.
+- Histórico de alterações das tarefas.
+- Hospedagem em nuvem com banco de dados gerenciado.
 
 ---
 
-## 17. Referências
+## Referências
 
-EXPRESS.JS. **Express - Fast, unopinionated, minimalist web framework for Node.js**. Disponível em: https://expressjs.com/. Acesso em: 15 nov. 2026.
+ANDERSON, David J. **Kanban: successful evolutionary change for your technology business**. Sequim: Blue Hole Press, 2010.
 
-FIELDING, Roy Thomas. **Architectural Styles and the Design of Network-based Software Architectures**. Doctoral dissertation, University of California, Irvine, 2000.
+ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. **NBR 14724**: informação e documentação: trabalhos acadêmicos: apresentação. Rio de Janeiro: ABNT, 2011.
 
-MOZILLA DEVELOPER NETWORK. **HTTP request methods**. Disponível em: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods. Acesso em: 15 nov. 2026.
+DND KIT. **Documentation**. Disponível em: https://docs.dndkit.com/. Acesso em: 15 nov. 2026.
 
-NODE.JS FOUNDATION. **Node.js Documentation**. Disponível em: https://nodejs.org/docs/. Acesso em: 15 nov. 2026.
+EXPRESS. **Express: fast, unopinionated, minimalist web framework for Node.js**. Disponível em: https://expressjs.com/. Acesso em: 15 nov. 2026.
 
-PRESSMAN, Roger S.; MAXIM, Bruce R. **Engenharia de Software: Uma Abordagem Profissional**. 8. ed. Porto Alegre: AMGH, 2016.
+FIELDING, Roy Thomas. **Architectural styles and the design of network-based software architectures**. 2000. Tese (Doutorado em Ciência da Computação) – University of California, Irvine, 2000.
 
-SOMMERVILLE, Ian. **Engenharia de Software**. 10. ed. São Paulo: Pearson, 2018.
+MICROSOFT. **TypeScript documentation**. Disponível em: https://www.typescriptlang.org/docs/. Acesso em: 15 nov. 2026.
 
-SQLITE. **SQLite Documentation**. Disponível em: https://www.sqlite.org/docs.html. Acesso em: 15 nov. 2026.
+PRESSMAN, Roger S.; MAXIM, Bruce R. **Engenharia de software: uma abordagem profissional**. 8. ed. Porto Alegre: AMGH, 2016.
 
----
+REACT. **React documentation**. Disponível em: https://react.dev/. Acesso em: 15 nov. 2026.
 
-**Repositório GitHub:** https://github.com/joaogpnfs/tarefas-gestor
+SHADCN. **shadcn/ui**. Disponível em: https://ui.shadcn.com/. Acesso em: 15 nov. 2026.
 
-**GitHub Pages:** https://joaogpnfs.github.io/tarefas-gestor/
+SOMMERVILLE, Ian. **Engenharia de software**. 10. ed. São Paulo: Pearson, 2018.
 
----
+SQLITE. **SQLite documentation**. Disponível em: https://www.sqlite.org/docs.html. Acesso em: 15 nov. 2026.
 
-*Documento gerado em 15 de novembro de 2026*
+TAILWIND LABS. **Tailwind CSS documentation**. Disponível em: https://tailwindcss.com/docs. Acesso em: 15 nov. 2026.
+
+VITE. **Vite: guide**. Disponível em: https://vite.dev/guide/. Acesso em: 15 nov. 2026.
