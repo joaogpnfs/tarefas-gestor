@@ -83,11 +83,12 @@ describe('API REST - Testes de Integração', () => {
     let membroId;
 
     it('POST /api/membros - deve criar um novo membro', async () => {
+      const uniqueEmail = `joao.test.${Date.now()}@unifil.br`;
       const res = await request(app)
         .post('/api/membros')
         .send({
           nome: 'João Gabriel',
-          email: 'joao.test@unifil.br',
+          email: uniqueEmail,
           cargo: 'Desenvolvedor'
         });
 
@@ -138,11 +139,12 @@ describe('API REST - Testes de Integração', () => {
     });
 
     it('PUT /api/membros/:id - deve atualizar um membro', async () => {
+      const uniqueEmail = `joao.updated.${Date.now()}@unifil.br`;
       const res = await request(app)
         .put(`/api/membros/${membroId}`)
         .send({
           nome: 'João Gabriel Atualizado',
-          email: 'joao.updated@unifil.br',
+          email: uniqueEmail,
           cargo: 'Tech Lead'
         });
 
