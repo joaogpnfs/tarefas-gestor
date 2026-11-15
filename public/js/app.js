@@ -3,15 +3,39 @@ const API_URL = 'http://localhost:4321/api';
 const app = {
   currentProjeto: null,
   membros: [],
+  theme: localStorage.getItem('theme') || 'dark',
 
   init() {
+    this.applyTheme();
     this.setupNavigation();
+    this.setupDragAndDrop();
     this.loadDashboard();
     this.loadMembros();
   },
 
+  // Theme Management
+  applyTheme() {
+    document.documentElement.setAttribute('data-theme', this.theme);
+    const label = document.getElementById('theme-label');
+    const icon = document.querySelector('.theme-toggle svg use');
+    if (this.theme === 'dark') {
+      label.textContent = 'Modo Claro';
+      icon.setAttribute('href', '#icon-sun');
+    } else {
+      label.textContent = 'Modo Escuro';
+      icon.setAttribute('href', '#icon-moon');
+    }
+  },
+
+  toggleTheme() {
+    this.theme = this.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', this.theme);
+    this.applyTheme();
+  },
+
+  // Navigation
   setupNavigation() {
-    document.querySelectorAll('.nav-btn').forEach(btn => {
+    document.querySelectorAll('.nav-item').forEach(btn => {
       btn.addEventListener('click', () => {
         const page = btn.dataset.page;
         this.navigateTo(page);
@@ -20,7 +44,7 @@ const app = {
   },
 
   navigateTo(page) {
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     
     document.querySelector(`[data-page="${page}"]`).classList.add('active');
@@ -35,6 +59,72 @@ const app = {
     }
   },
 
+  // Drag and Drop for Kanban
+  setupDragAndDrop() {
+    document.addEventListener('dragstart', (e) => {
+      if (e.target.classList.contains('task-card')) {
+        e.target.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', e.target.innerHTML);
+        e.dataTransfer.setData('taskId', e.target.dataset.taskId);
+      }
+    });
+
+    document.addEventListener('dragend', (e) => {
+      if (e.target.classList.contains('task-card')) {
+        e.target.classList.remove('dragging');
+      }
+    });
+
+    document.addEventListener('dragover', (e) => {
+      if (e.target.classList.contains('kanban-tasks')) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      }
+    });
+
+    document.addEventListener('dragenter', (e) => {
+      if (e.target.classList.contains('kanban-tasks')) {
+        e.target.classList.add('drag-over');
+      }
+    });
+
+    document.addEventListener('dragleave', (e) => {
+      if (e.target.classList.contains('kanban-tasks')) {
+        e.target.classList.remove('drag-over');
+      }
+    });
+
+    document.addEventListener('drop', async (e) => {
+      if (e.target.classList.contains('kanban-tasks')) {
+        e.preventDefault();
+        e.target.classList.remove('drag-over');
+        
+        const taskId = e.dataTransfer.getData('taskId');
+        const newStatus = e.target.dataset.status;
+        
+        if (taskId && newStatus) {
+          await this.updateTaskStatus(taskId, newStatus);
+        }
+      }
+    });
+  },
+
+  async updateTaskStatus(taskId, newStatus) {
+    try {
+      const tarefa = await this.fetch(`/tarefas/${taskId}`);
+      await this.fetch(`/tarefas/${taskId}`, 'PUT', {
+        ...tarefa,
+        status: newStatus
+      });
+      this.showToast('Status atualizado!', 'success');
+      this.loadTarefas();
+    } catch (error) {
+      this.showToast('Erro ao atualizar status', 'error');
+    }
+  },
+
+  // Dashboard
   async loadDashboard() {
     try {
       const stats = await this.fetch('/dashboard/stats');
@@ -59,20 +149,44 @@ const app = {
     const container = document.getElementById('tarefas-atrasadas-list');
     
     if (tarefas.length === 0) {
-      container.innerHTML = '<p class="empty-state">Nenhuma tarefa atrasada 🎉</p>';
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🎉</div>
+          <div class="empty-state-text">Nenhuma tarefa atrasada</div>
+          <div class="empty-state-hint">Todas as tarefas estão em dia!</div>
+        </div>
+      `;
       return;
     }
 
     container.innerHTML = tarefas.map(t => `
-      <div class="tarefa-atrasada-card">
+      <div class="task-card" style="margin-bottom: 12px;">
         <h4>${t.titulo}</h4>
-        <p><strong>Projeto:</strong> ${t.projeto_nome}</p>
-        <p><strong>Data de Entrega:</strong> ${this.formatDate(t.data_entrega)}</p>
-        ${t.responsavel_nome ? `<p><strong>Responsável:</strong> ${t.responsavel_nome}</p>` : ''}
+        <div class="task-meta">
+          <div class="task-meta-row">
+            <span class="task-info">
+              <svg width="14" height="14"><use href="#icon-grid"/></svg>
+              ${t.projeto_nome}
+            </span>
+          </div>
+          <div class="task-meta-row">
+            <span class="task-info">
+              <svg width="14" height="14"><use href="#icon-calendar"/></svg>
+              ${this.formatDate(t.data_entrega)}
+            </span>
+            ${t.responsavel_nome ? `
+              <span class="task-info">
+                <svg width="14" height="14"><use href="#icon-user"/></svg>
+                ${t.responsavel_nome}
+              </span>
+            ` : ''}
+          </div>
+        </div>
       </div>
     `).join('');
   },
 
+  // Projetos
   async loadProjetos() {
     try {
       const projetos = await this.fetch('/projetos');
@@ -86,16 +200,28 @@ const app = {
     const container = document.getElementById('projetos-list');
     
     if (projetos.length === 0) {
-      container.innerHTML = '<p class="empty-state">Nenhum projeto cadastrado</p>';
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📁</div>
+          <div class="empty-state-text">Nenhum projeto cadastrado</div>
+          <div class="empty-state-hint">Crie seu primeiro projeto para começar</div>
+        </div>
+      `;
       return;
     }
 
     container.innerHTML = projetos.map(p => `
-      <div class="projeto-card" style="border-left-color: ${p.cor}" onclick="app.viewProjeto(${p.id})">
-        <h3>${p.nome}</h3>
-        <p>${p.descricao || 'Sem descrição'}</p>
-        <div class="projeto-stats">
-          <span>📅 ${this.formatDate(p.criado_em)}</span>
+      <div class="project-card" onclick="app.viewProjeto(${p.id})">
+        <div class="project-color-bar" style="background: ${p.cor}"></div>
+        <div class="project-content">
+          <h3>${p.nome}</h3>
+          <p>${p.descricao || 'Sem descrição'}</p>
+          <div class="project-meta">
+            <span>
+              <svg width="14" height="14"><use href="#icon-calendar"/></svg>
+              ${this.formatDate(p.criado_em)}
+            </span>
+          </div>
         </div>
       </div>
     `).join('');
@@ -146,6 +272,10 @@ const app = {
     const emAndamento = tarefas.filter(t => t.status === 'Em andamento');
     const concluido = tarefas.filter(t => t.status === 'Concluído');
 
+    document.getElementById('count-todo').textContent = aFazer.length;
+    document.getElementById('count-doing').textContent = emAndamento.length;
+    document.getElementById('count-done').textContent = concluido.length;
+
     document.getElementById('kanban-a-fazer').innerHTML = this.renderTarefaCards(aFazer);
     document.getElementById('kanban-em-andamento').innerHTML = this.renderTarefaCards(emAndamento);
     document.getElementById('kanban-concluido').innerHTML = this.renderTarefaCards(concluido);
@@ -153,26 +283,47 @@ const app = {
 
   renderTarefaCards(tarefas) {
     if (tarefas.length === 0) {
-      return '<p class="empty-state">Nenhuma tarefa</p>';
+      return `
+        <div class="empty-state">
+          <div class="empty-state-icon" style="font-size: 32px;">📝</div>
+          <div class="empty-state-text" style="font-size: 13px;">Nenhuma tarefa</div>
+        </div>
+      `;
     }
 
     return tarefas.map(t => {
-      const prioClass = t.prioridade.toLowerCase().replace('é', 'e').replace('á', 'a');
-      const badgeClass = prioClass === 'baixa' ? 'badge-baixa' : prioClass === 'media' ? 'badge-media' : 'badge-alta';
+      const prioClass = t.prioridade.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       
       return `
-        <div class="tarefa-card prioridade-${prioClass}" onclick="app.editTarefa(${t.id})">
+        <div class="task-card" draggable="true" data-task-id="${t.id}" onclick="app.editTarefa(${t.id})">
           <h4>${t.titulo}</h4>
-          <div class="tarefa-info">
-            <span class="tarefa-badge ${badgeClass}">${t.prioridade}</span>
-            ${t.responsavel_nome ? `<span>👤 ${t.responsavel_nome}</span>` : '<span>👤 Sem responsável</span>'}
-            ${t.data_entrega ? `<span>📅 ${this.formatDate(t.data_entrega)}</span>` : ''}
+          <div class="task-meta">
+            <div class="task-meta-row">
+              <span class="priority-badge ${prioClass}">${t.prioridade}</span>
+            </div>
+            ${t.responsavel_nome || t.data_entrega ? `
+              <div class="task-meta-row">
+                ${t.responsavel_nome ? `
+                  <span class="task-info">
+                    <svg width="14" height="14"><use href="#icon-user"/></svg>
+                    ${t.responsavel_nome}
+                  </span>
+                ` : ''}
+                ${t.data_entrega ? `
+                  <span class="task-info">
+                    <svg width="14" height="14"><use href="#icon-calendar"/></svg>
+                    ${this.formatDate(t.data_entrega)}
+                  </span>
+                ` : ''}
+              </div>
+            ` : ''}
           </div>
         </div>
       `;
     }).join('');
   },
 
+  // Membros
   async loadMembrosPage() {
     try {
       const membros = await this.fetch('/membros');
@@ -186,19 +337,29 @@ const app = {
     const container = document.getElementById('membros-list');
     
     if (membros.length === 0) {
-      container.innerHTML = '<p class="empty-state">Nenhum membro cadastrado</p>';
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">👥</div>
+          <div class="empty-state-text">Nenhum membro cadastrado</div>
+          <div class="empty-state-hint">Adicione membros à sua equipe</div>
+        </div>
+      `;
       return;
     }
 
     container.innerHTML = membros.map(m => `
-      <div class="membro-card">
-        <div class="membro-avatar">${this.getInitials(m.nome)}</div>
+      <div class="member-card">
+        <div class="member-avatar">${this.getInitials(m.nome)}</div>
         <h3>${m.nome}</h3>
-        <p class="email">${m.email}</p>
-        ${m.cargo ? `<p class="cargo">${m.cargo}</p>` : ''}
-        <div class="membro-actions">
-          <button class="btn-icon" onclick="app.editMembroModal(${m.id})" title="Editar">✏️</button>
-          <button class="btn-icon" onclick="app.deleteMembro(${m.id})" title="Excluir">🗑️</button>
+        <p class="member-email">${m.email}</p>
+        ${m.cargo ? `<p class="member-role">${m.cargo}</p>` : ''}
+        <div class="member-actions">
+          <button class="btn-icon" onclick="app.editMembroModal(${m.id})" title="Editar">
+            <svg width="16" height="16"><use href="#icon-edit"/></svg>
+          </button>
+          <button class="btn-icon" onclick="app.deleteMembro(${m.id})" title="Excluir">
+            <svg width="16" height="16"><use href="#icon-trash"/></svg>
+          </button>
         </div>
       </div>
     `).join('');
@@ -224,12 +385,13 @@ const app = {
     }
   },
 
+  // Modals - Projeto
   showProjetoModal(projeto = null) {
     document.getElementById('projeto-modal-title').textContent = projeto ? 'Editar Projeto' : 'Novo Projeto';
     document.getElementById('projeto-id').value = projeto ? projeto.id : '';
     document.getElementById('projeto-nome').value = projeto ? projeto.nome : '';
     document.getElementById('projeto-descricao').value = projeto ? projeto.descricao || '' : '';
-    document.getElementById('projeto-cor').value = projeto ? projeto.cor : '#3B82F6';
+    document.getElementById('projeto-cor').value = projeto ? projeto.cor : '#8b5cf6';
     
     this.showModal('projeto-modal');
   },
@@ -247,10 +409,10 @@ const app = {
     try {
       if (id) {
         await this.fetch(`/projetos/${id}`, 'PUT', data);
-        this.showToast('Projeto atualizado com sucesso', 'success');
+        this.showToast('Projeto atualizado!', 'success');
       } else {
         await this.fetch('/projetos', 'POST', data);
-        this.showToast('Projeto criado com sucesso', 'success');
+        this.showToast('Projeto criado!', 'success');
       }
       
       this.closeModal('projeto-modal');
@@ -265,6 +427,7 @@ const app = {
     this.showProjetoModal(this.currentProjeto);
   },
 
+  // Modals - Tarefa
   showTarefaModal(tarefa = null) {
     document.getElementById('tarefa-modal-title').textContent = tarefa ? 'Editar Tarefa' : 'Nova Tarefa';
     document.getElementById('tarefa-id').value = tarefa ? tarefa.id : '';
@@ -296,10 +459,10 @@ const app = {
     try {
       if (id) {
         await this.fetch(`/tarefas/${id}`, 'PUT', data);
-        this.showToast('Tarefa atualizada com sucesso', 'success');
+        this.showToast('Tarefa atualizada!', 'success');
       } else {
         await this.fetch('/tarefas', 'POST', data);
-        this.showToast('Tarefa criada com sucesso', 'success');
+        this.showToast('Tarefa criada!', 'success');
       }
       
       this.closeModal('tarefa-modal');
@@ -318,6 +481,7 @@ const app = {
     }
   },
 
+  // Modals - Membro
   showMembroModal(membro = null) {
     document.getElementById('membro-modal-title').textContent = membro ? 'Editar Membro' : 'Novo Membro';
     document.getElementById('membro-id').value = membro ? membro.id : '';
@@ -341,10 +505,10 @@ const app = {
     try {
       if (id) {
         await this.fetch(`/membros/${id}`, 'PUT', data);
-        this.showToast('Membro atualizado com sucesso', 'success');
+        this.showToast('Membro atualizado!', 'success');
       } else {
         await this.fetch('/membros', 'POST', data);
-        this.showToast('Membro criado com sucesso', 'success');
+        this.showToast('Membro criado!', 'success');
       }
       
       this.closeModal('membro-modal');
@@ -369,7 +533,7 @@ const app = {
 
     try {
       await this.fetch(`/membros/${id}`, 'DELETE');
-      this.showToast('Membro excluído com sucesso', 'success');
+      this.showToast('Membro excluído!', 'success');
       await this.loadMembros();
       this.loadMembrosPage();
     } catch (error) {
@@ -377,6 +541,7 @@ const app = {
     }
   },
 
+  // Modal helpers
   showModal(id) {
     document.getElementById(id).classList.add('active');
   },
@@ -385,6 +550,7 @@ const app = {
     document.getElementById(id).classList.remove('active');
   },
 
+  // Toast
   showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
@@ -395,6 +561,7 @@ const app = {
     }, 3000);
   },
 
+  // API
   async fetch(endpoint, method = 'GET', body = null) {
     const options = {
       method,
@@ -421,6 +588,7 @@ const app = {
     return response.json();
   },
 
+  // Helpers
   formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
