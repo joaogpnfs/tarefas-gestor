@@ -1,171 +1,148 @@
-import { useEffect, useState } from 'react'
-import { Plus, Pencil, Trash } from 'lucide-react'
-import { Card } from '../components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table'
-import { Button } from '../components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog'
-import { Input } from '../components/ui/input'
+import { useState } from 'react'
+import { Mail, MoreHorizontal, Pencil, Plus, Trash2, UserPlus } from 'lucide-react'
+import { toast } from 'sonner'
 import { api } from '../lib/api'
 import type { Membro } from '../lib/api'
-import { toast } from 'sonner'
+import { useData } from '../lib/data'
+import { avatarColor } from '../lib/ui'
+import { Avatar } from '../components/Avatar'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog'
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from '../components/ui/dropdown'
 
 export default function Membros() {
-  const [membros, setMembros] = useState<Membro[]>([])
+  const { membros, tarefas, projetos, refresh } = useData()
   const [open, setOpen] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [formData, setFormData] = useState({ nome: '', email: '', cargo: '' })
+  const [editing, setEditing] = useState<Membro | null>(null)
+  const [form, setForm] = useState({ nome: '', email: '', cargo: '' })
 
-  useEffect(() => {
-    loadMembros()
-  }, [])
-
-  async function loadMembros() {
-    try {
-      const data = await api.membros.getAll()
-      setMembros(data)
-    } catch (error) {
-      console.error('Erro ao carregar membros:', error)
-      toast.error('Erro ao carregar membros')
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    try {
-      if (editingId) {
-        await api.membros.update(editingId, formData)
-        toast.success('Membro atualizado com sucesso!')
-      } else {
-        await api.membros.create(formData)
-        toast.success('Membro criado com sucesso!')
-      }
-      setOpen(false)
-      setEditingId(null)
-      setFormData({ nome: '', email: '', cargo: '' })
-      loadMembros()
-    } catch (error) {
-      console.error('Erro ao salvar membro:', error)
-      toast.error('Erro ao salvar membro')
-    }
-  }
-
-  async function handleDelete(id: number) {
-    if (!confirm('Tem certeza que deseja excluir este membro?')) return
-    try {
-      await api.membros.delete(id)
-      toast.success('Membro excluído com sucesso!')
-      loadMembros()
-    } catch (error) {
-      console.error('Erro ao excluir membro:', error)
-      toast.error('Erro ao excluir membro')
-    }
-  }
-
-  function handleEdit(membro: Membro) {
-    setEditingId(membro.id)
-    setFormData({
-      nome: membro.nome,
-      email: membro.email,
-      cargo: membro.cargo || '',
-    })
+  const abrir = (m?: Membro) => {
+    setEditing(m ?? null)
+    setForm({ nome: m?.nome ?? '', email: m?.email ?? '', cargo: m?.cargo ?? '' })
     setOpen(true)
   }
 
-  function handleClose() {
-    setOpen(false)
-    setEditingId(null)
-    setFormData({ nome: '', email: '', cargo: '' })
+  const salvar = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      if (editing) await api.membros.update(editing.id, form)
+      else await api.membros.create(form)
+      toast.success(editing ? 'Membro atualizado' : 'Membro adicionado')
+      setOpen(false)
+      refresh()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar membro')
+    }
+  }
+
+  const excluir = async (m: Membro) => {
+    if (!confirm(`Remover ${m.nome} da equipe?`)) return
+    try {
+      await api.membros.delete(m.id)
+      toast.success('Membro removido')
+      refresh()
+    } catch {
+      toast.error('Erro ao remover membro')
+    }
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Membros</h1>
-        <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-          <DialogTrigger asChild>
-            <Button className="gap-2" onClick={() => setOpen(true)}>
-              <Plus className="h-4 w-4" />
-              Novo Membro
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {editingId ? 'Editar Membro' : 'Criar Novo Membro'}
-              </DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Nome</label>
-                <Input
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Email</label>
-                <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Cargo</label>
-                <Input
-                  value={formData.cargo}
-                  onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                {editingId ? 'Atualizar' : 'Criar'} Membro
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+    <div className="mx-auto max-w-[1120px] animate-fade-up px-10 pb-16 pt-10">
+      <div className="text-5xl">👥</div>
+      <div className="mt-3 flex items-end justify-between">
+        <div>
+          <h1 className="text-[34px] font-bold tracking-tight">Membros</h1>
+          <p className="text-[15px] text-muted-foreground">{membros.length} pessoas colaborando em {projetos.length} projetos.</p>
+        </div>
+        <Button onClick={() => abrir()}><UserPlus />Convidar membro</Button>
       </div>
 
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Cargo</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {membros.map((membro) => (
-              <TableRow key={membro.id}>
-                <TableCell className="font-medium">{membro.nome}</TableCell>
-                <TableCell>{membro.email}</TableCell>
-                <TableCell>{membro.cargo || '-'}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(membro)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(membro.id)}
-                    >
-                      <Trash className="h-4 w-4 text-destructive" />
-                    </Button>
+      <div className="mt-6 grid grid-cols-3 gap-4 xl:grid-cols-4">
+        {membros.map((m, i) => {
+          const ts = tarefas.filter((t) => t.responsavel_id === m.id)
+          const done = ts.filter((t) => t.status === 'Concluído').length
+          const doing = ts.filter((t) => t.status === 'Em andamento').length
+          const todo = ts.length - done - doing
+          const pct = ts.length ? Math.round((done / ts.length) * 100) : 0
+          const projs = projetos.filter((p) => ts.some((t) => t.projeto_id === p.id))
+          const color = avatarColor(m.nome)
+          return (
+            <div key={m.id} className="group animate-fade-up overflow-hidden rounded-xl border bg-card shadow-card transition duration-200 hover:-translate-y-0.5 hover:shadow-card-hover"
+              style={{ animationDelay: `${i * 40}ms` }}>
+              <div className="relative h-16" style={{ background: `linear-gradient(120deg, ${color}, ${color}99)` }}>
+                <div className="cover-pattern absolute inset-0 opacity-60" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="absolute right-2 top-2 rounded-md bg-white/20 p-1 text-white opacity-0 backdrop-blur transition group-hover:opacity-100 hover:bg-white/30">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={() => abrir(m)}><Pencil /> Editar</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem destructive onSelect={() => excluir(m)}><Trash2 /> Remover</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="px-4 pb-4">
+                <div className="-mt-7 inline-block rounded-full bg-card p-1"><Avatar name={m.nome} size={52} /></div>
+                <h3 className="mt-1 truncate text-[15px] font-semibold">{m.nome}</h3>
+                <p className="truncate text-[13px] text-muted-foreground">{m.cargo ?? 'Membro'}</p>
+                <a href={`mailto:${m.email}`} className="mt-1 flex items-center gap-1.5 truncate text-xs text-muted-foreground hover:text-foreground">
+                  <Mail className="h-3 w-3" />{m.email}
+                </a>
+                <div className="mt-3 grid grid-cols-3 gap-1.5 text-center">
+                  {[
+                    { n: todo, l: 'A fazer', c: 'pill-gray' },
+                    { n: doing, l: 'Fazendo', c: 'pill-blue' },
+                    { n: done, l: 'Feitas', c: 'pill-green' },
+                  ].map((s) => (
+                    <div key={s.l} className={`rounded-md py-1.5 ${s.c}`}>
+                      <div className="text-base font-semibold leading-none">{s.n}</div>
+                      <div className="mt-0.5 text-[10px] font-medium opacity-80">{s.l}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                    <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: color }} />
                   </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+                  <span className="text-xs text-muted-foreground">{pct}%</span>
+                </div>
+                <div className="mt-3 flex h-6 items-center gap-1">
+                  {projs.map((p) => (
+                    <span key={p.id} title={p.nome} className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-sm">{p.emoji}</span>
+                  ))}
+                  {projs.length === 0 && <span className="text-xs text-muted-foreground">Sem projetos</span>}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+        <button onClick={() => abrir()}
+          className="flex min-h-[300px] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed text-sm font-medium text-muted-foreground transition hover:border-primary/40 hover:bg-card hover:text-foreground">
+          <Plus className="h-5 w-5" />Adicionar membro
+        </button>
+      </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md" aria-describedby={undefined}>
+          <DialogHeader><DialogTitle>{editing ? 'Editar membro' : 'Convidar membro'}</DialogTitle></DialogHeader>
+          <form onSubmit={salvar} className="space-y-3">
+            <div className="flex justify-center py-2"><Avatar name={form.nome || null} size={56} /></div>
+            <Input placeholder="Nome completo" value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} required />
+            <Input type="email" placeholder="email@exemplo.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+            <Input placeholder="Cargo (ex.: Desenvolvedora Frontend)" value={form.cargo} onChange={(e) => setForm({ ...form, cargo: e.target.value })} />
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
+              <Button type="submit">{editing ? 'Salvar' : 'Adicionar'}</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

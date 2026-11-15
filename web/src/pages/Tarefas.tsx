@@ -1,171 +1,113 @@
-import { useEffect, useState } from 'react'
-import { Filter } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table'
-import { Badge } from '../components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { api } from '../lib/api'
-import type { Tarefa, Projeto, Membro } from '../lib/api'
+import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { Search, Plus, Table2, KanbanSquare, CalendarDays, List } from 'lucide-react'
+import { useData } from '../lib/data'
+import { cn } from '../lib/utils'
+import { PRIORIDADES, PRIORIDADE_META, isOverdue } from '../lib/ui'
+import type { Prioridade } from '../lib/ui'
+import { Avatar } from '../components/Avatar'
+import { Button } from '../components/ui/button'
+import TableView from '../components/views/TableView'
+import BoardView from '../components/views/BoardView'
+import ListView from '../components/views/ListView'
+import CalendarView from '../components/views/CalendarView'
 
-export default function Tarefas() {
-  const [tarefas, setTarefas] = useState<Tarefa[]>([])
-  const [projetos, setProjetos] = useState<Projeto[]>([])
-  const [membros, setMembros] = useState<Membro[]>([])
-  const [filters, setFilters] = useState({
-    projeto_id: '',
-    status: '',
-    prioridade: '',
-    responsavel_id: '',
-  })
+const VIEWS = [
+  { key: 'tabela', label: 'Por status', icon: Table2 },
+  { key: 'quadro', label: 'Quadro', icon: KanbanSquare },
+  { key: 'lista', label: 'Lista', icon: List },
+  { key: 'calendario', label: 'Calendário', icon: CalendarDays },
+] as const
 
-  useEffect(() => {
-    loadData()
-  }, [filters])
+export default function Tarefas({ mine = false }: { mine?: boolean }) {
+  const { tarefas, membros, projetos, currentUser, newTask } = useData()
+  const [params, setParams] = useSearchParams()
+  const view = (params.get('view') ?? 'tabela') as (typeof VIEWS)[number]['key']
+  const setView = (v: string) => setParams((p) => { p.set('view', v); return p }, { replace: true })
+  const [q, setQ] = useState('')
+  const [prio, setPrio] = useState<Prioridade | null>(null)
+  const [resp, setResp] = useState<number | null>(null)
+  const [proj, setProj] = useState<number | null>(null)
 
-  async function loadData() {
-    try {
-      const cleanFilters: Record<string, string | number> = {}
-      if (filters.projeto_id) cleanFilters.projeto_id = Number(filters.projeto_id)
-      if (filters.status) cleanFilters.status = filters.status
-      if (filters.prioridade) cleanFilters.prioridade = filters.prioridade
-      if (filters.responsavel_id) cleanFilters.responsavel_id = Number(filters.responsavel_id)
+  const base = useMemo(
+    () => (mine && currentUser ? tarefas.filter((t) => t.responsavel_id === currentUser.id) : tarefas),
+    [tarefas, mine, currentUser],
+  )
+  const list = useMemo(() => base.filter((t) =>
+    (!q || t.titulo.toLowerCase().includes(q.toLowerCase())) &&
+    (!prio || t.prioridade === prio) &&
+    (!resp || t.responsavel_id === resp) &&
+    (!proj || t.projeto_id === proj),
+  ), [base, q, prio, resp, proj])
 
-      const [tarefasData, projetosData, membrosData] = await Promise.all([
-        api.tarefas.getAll(cleanFilters),
-        api.projetos.getAll(),
-        api.membros.getAll(),
-      ])
-
-      setTarefas(tarefasData)
-      setProjetos(projetosData)
-      setMembros(membrosData)
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error)
-    }
-  }
-
-  const statusCor = {
-    'A fazer': 'secondary',
-    'Em andamento': 'default',
-    'Concluído': 'outline',
-  } as const
-
-  const prioridadeCor = {
-    'Baixa': 'secondary',
-    'Média': 'default',
-    'Alta': 'destructive',
-  } as const
+  const chip = (active: boolean) => cn(
+    'flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium transition-colors',
+    active ? 'border-primary/40 bg-primary/10 text-primary' : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground',
+  )
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Tarefas</h1>
+    <div className="animate-fade-up px-10 pb-16 pt-10">
+      <div className="text-5xl">{mine ? '📥' : '✅'}</div>
+      <h1 className="mt-3 text-[34px] font-bold tracking-tight">{mine ? 'Minhas tarefas' : 'Todas as tarefas'}</h1>
+      <p className="text-[15px] text-muted-foreground">
+        {mine ? 'Tudo o que está atribuído a você, em todos os projetos.' : 'Banco de dados com as tarefas de todos os projetos da equipe.'}
+        {' '}<span className="font-medium text-foreground">{base.filter((t) => t.status !== 'Concluído').length} abertas</span>
+        {' · '}<span className="font-medium text-[#e03e3e]">{base.filter(isOverdue).length} atrasadas</span>
+      </p>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filtros
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Projeto</label>
-              <Select value={filters.projeto_id} onValueChange={(v) => setFilters({ ...filters, projeto_id: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Todos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
-                  {projetos.map((p) => (
-                    <SelectItem key={p.id} value={String(p.id)}>{p.nome}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">Status</label>
-              <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Todos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
-                  <SelectItem value="A fazer">A fazer</SelectItem>
-                  <SelectItem value="Em andamento">Em andamento</SelectItem>
-                  <SelectItem value="Concluído">Concluído</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">Prioridade</label>
-              <Select value={filters.prioridade} onValueChange={(v) => setFilters({ ...filters, prioridade: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Todas" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Todas</SelectItem>
-                  <SelectItem value="Baixa">Baixa</SelectItem>
-                  <SelectItem value="Média">Média</SelectItem>
-                  <SelectItem value="Alta">Alta</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">Responsável</label>
-              <Select value={filters.responsavel_id} onValueChange={(v) => setFilters({ ...filters, responsavel_id: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Todos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
-                  {membros.map((m) => (
-                    <SelectItem key={m.id} value={String(m.id)}>{m.nome}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="mt-6 flex items-center gap-1 border-b">
+        {VIEWS.map((v) => {
+          const Icon = v.icon
+          return (
+            <button key={v.key} onClick={() => setView(v.key)}
+              className={cn('relative flex items-center gap-1.5 px-2.5 pb-2 pt-1.5 text-sm font-medium', view === v.key ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+              <Icon className="h-4 w-4" />{v.label}
+              {view === v.key && <span className="absolute inset-x-1.5 -bottom-px h-[2px] rounded-full bg-foreground" />}
+            </button>
+          )
+        })}
+        <div className="ml-auto flex items-center gap-1 pb-1.5">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar…"
+              className="h-8 w-44 rounded-md bg-transparent pl-7 pr-2 text-sm outline-none placeholder:text-muted-foreground hover:bg-accent focus:bg-card focus:ring-1 focus:ring-border" />
           </div>
-        </CardContent>
-      </Card>
+          <Button size="sm" onClick={() => newTask({ responsavel_id: mine ? currentUser?.id ?? null : null })}><Plus />Novo</Button>
+        </div>
+      </div>
 
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Título</TableHead>
-              <TableHead>Projeto</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Prioridade</TableHead>
-              <TableHead>Responsável</TableHead>
-              <TableHead>Entrega</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tarefas.map((tarefa) => (
-              <TableRow key={tarefa.id}>
-                <TableCell className="font-medium">{tarefa.titulo}</TableCell>
-                <TableCell>{tarefa.projeto_nome}</TableCell>
-                <TableCell>
-                  <Badge variant={statusCor[tarefa.status]}>{tarefa.status}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={prioridadeCor[tarefa.prioridade]}>{tarefa.prioridade}</Badge>
-                </TableCell>
-                <TableCell>{tarefa.responsavel_nome || '-'}</TableCell>
-                <TableCell>
-                  {tarefa.data_entrega
-                    ? new Date(tarefa.data_entrega).toLocaleDateString('pt-BR')
-                    : '-'}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+      {/* Filtros */}
+      <div className="flex flex-wrap items-center gap-1.5 py-3">
+        {PRIORIDADES.map((p) => (
+          <button key={p} onClick={() => setPrio(prio === p ? null : p)} className={chip(prio === p)}>
+            <span className="h-2 w-2 rounded-full" style={{ background: PRIORIDADE_META[p].hex }} />{p}
+          </button>
+        ))}
+        <span className="mx-1 h-4 w-px bg-border" />
+        {projetos.map((p) => (
+          <button key={p.id} onClick={() => setProj(proj === p.id ? null : p.id)} className={chip(proj === p.id)}>
+            <span>{p.emoji}</span><span className="max-w-[120px] truncate">{p.nome}</span>
+          </button>
+        ))}
+        {!mine && (
+          <>
+            <span className="mx-1 h-4 w-px bg-border" />
+            <div className="flex -space-x-1">
+              {membros.map((m) => (
+                <button key={m.id} onClick={() => setResp(resp === m.id ? null : m.id)} title={m.nome}
+                  className={cn('rounded-full transition hover:z-10 hover:scale-110', resp === m.id && 'z-10 ring-2 ring-primary ring-offset-1 ring-offset-background')}>
+                  <Avatar name={m.nome} size={26} ring />
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {view === 'tabela' && <TableView tarefas={list} showProject groupByStatus />}
+      {view === 'quadro' && <BoardView tarefas={list} />}
+      {view === 'lista' && <ListView tarefas={list} />}
+      {view === 'calendario' && <CalendarView tarefas={list} />}
     </div>
   )
 }
