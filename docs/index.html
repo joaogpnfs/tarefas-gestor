@@ -3,397 +3,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sistema de Controle de Tarefas e Projetos - Projeto acadêmico UniFil">
-  <meta name="author" content="João Gabriel Pereira Nascimento Feitosa da Silva">
-  <title>Sistema de Controle de Tarefas e Projetos | UniFil</title>
+  <title>Taskora · Controle de Tarefas e Projetos</title>
+  <meta name="description" content="Taskora: sistema web de controle de tarefas e projetos inspirado no Notion e no Trello. Projeto acadêmico de Engenharia de Software da UniFil.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     :root {
-      --primary: #3B82F6;
-      --primary-dark: #2563EB;
-      --secondary: #64748B;
-      --success: #10B981;
-      --warning: #F59E0B;
-      --bg: #F8FAFC;
-      --card-bg: #FFFFFF;
-      --text: #1E293B;
-      --text-light: #64748B;
-      --border: #E2E8F0;
+      --bg: #ffffff; --soft: #f7f7f5; --line: #e9e9e7; --text: #37352f; --muted: #787774;
+      --primary: #2383e2; --primary-dark: #0b6bcb; --radius: 14px;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      color: var(--text);
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
+    nav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+    nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; text-decoration: none; }
+    .logo span.mark { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #6a5af9, #2383e2); color: #fff; display: grid; place-items: center; font-size: 14px; }
+    nav .links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+    nav .links a { text-decoration: none; } nav .links a:hover { color: var(--text); }
+
+    .hero { padding: 84px 0 40px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: -40% -10% auto; height: 520px; background: radial-gradient(closest-side, rgba(106,90,249,.14), transparent), radial-gradient(closest-side at 70% 40%, rgba(244,114,182,.12), transparent); z-index: -1; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; color: var(--muted); background: #fff; }
+    .pill b { color: var(--text); font-weight: 600; }
+    .hero h1 { font-size: clamp(38px, 6vw, 64px); line-height: 1.08; letter-spacing: -0.03em; font-weight: 800; margin: 22px auto 18px; max-width: 820px; }
+    .hero h1 em { font-style: normal; background: linear-gradient(120deg, #6a5af9, #a855f7 45%, #f472b6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero p.lead { font-size: 19px; color: var(--muted); max-width: 680px; margin: 0 auto 30px; }
+    .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 15px; text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 6px 18px rgba(35,131,226,.28); }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-ghost { border: 1px solid var(--line); background: #fff; }
+    .btn-ghost:hover { background: var(--soft); }
+
+    .shot { margin: 54px auto 0; max-width: 1040px; border-radius: 16px; border: 1px solid var(--line); overflow: hidden; box-shadow: 0 30px 80px -20px rgba(15,15,15,.25), 0 0 0 6px rgba(247,247,245,.9); }
+    .shot img { display: block; width: 100%; height: auto; }
+
+    section { padding: 80px 0; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; font-weight: 700; color: var(--primary); }
+    h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; line-height: 1.15; margin: 10px 0 14px; }
+    .sub { color: var(--muted); font-size: 17px; max-width: 640px; }
+    .center { text-align: center; } .center .sub { margin: 0 auto; }
+
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
+    .card { border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; background: #fff; transition: box-shadow .2s, transform .2s; }
+    .card:hover { box-shadow: 0 12px 30px -12px rgba(15,15,15,.15); transform: translateY(-2px); }
+    .card .ic { font-size: 26px; }
+    .card h3 { font-size: 17px; margin: 12px 0 6px; }
+    .card p { color: var(--muted); font-size: 14.5px; }
+
+    .gallery { background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 44px; }
+    figure { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    figure img { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--line); cursor: zoom-in; }
+    figcaption { padding: 14px 18px; font-size: 14px; color: var(--muted); }
+    figcaption b { color: var(--text); display: block; font-size: 15px; margin-bottom: 2px; }
+
+    .stack { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+    .stack .card h3 { margin-top: 0; font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .tag { font-size: 13.5px; font-weight: 500; padding: 5px 11px; border-radius: 8px; background: var(--soft); border: 1px solid var(--line); }
+
+    .run { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; margin-top: 36px; }
+    pre { background: #191919; color: #e6e6e6; border-radius: var(--radius); padding: 22px 24px; font-size: 14px; line-height: 1.75; overflow-x: auto; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace; }
+    pre .c { color: #7d7d7d; }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+    .stat b { font-size: 34px; letter-spacing: -0.02em; display: block; }
+    .stat span { color: var(--muted); font-size: 14px; }
+
+    footer { border-top: 1px solid var(--line); padding: 36px 0; color: var(--muted); font-size: 14px; }
+    footer .container { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    footer a { text-decoration: none; font-weight: 500; color: var(--text); }
+
+    .lightbox { position: fixed; inset: 0; background: rgba(15,15,15,.82); display: none; align-items: center; justify-content: center; padding: 30px; z-index: 50; cursor: zoom-out; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; }
+
+    @media (max-width: 860px) {
+      .features, .stack { grid-template-columns: 1fr 1fr; }
+      .grid2, .run { grid-template-columns: 1fr; }
+      nav .links { display: none; }
     }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    header {
-      padding: 3rem 0;
-      text-align: center;
-      color: white;
-    }
-
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
-    }
-
-    header p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-    }
-
-    .hero {
-      background: white;
-      border-radius: 16px;
-      padding: 3rem;
-      margin: 2rem auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      max-width: 900px;
-    }
-
-    .hero h2 {
-      color: var(--primary);
-      margin-bottom: 1rem;
-      font-size: 2rem;
-    }
-
-    .hero p {
-      color: var(--text-light);
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-
-    .btn {
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s;
-      display: inline-block;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(59,130,246,0.3);
-    }
-
-    .btn-secondary {
-      background: var(--bg);
-      color: var(--text);
-      border: 2px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--primary);
-      transform: translateY(-2px);
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-
-    .feature {
-      background: var(--bg);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border-left: 4px solid var(--primary);
-    }
-
-    .feature h3 {
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .feature p {
-      color: var(--text-light);
-      font-size: 0.95rem;
-    }
-
-    .tech-stack {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      margin: 2rem auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 900px;
-    }
-
-    .tech-stack h2 {
-      color: var(--primary);
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-
-    .tech-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .tech-item {
-      background: var(--bg);
-      padding: 1rem;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .info-section {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      margin: 2rem auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 900px;
-    }
-
-    .info-section h3 {
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .info-section p, .info-section ul {
-      color: var(--text-light);
-      margin-bottom: 1rem;
-    }
-
-    .info-section ul {
-      padding-left: 2rem;
-    }
-
-    .info-section li {
-      margin-bottom: 0.5rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: white;
-      opacity: 0.9;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 0.3rem 0.8rem;
-      background: var(--success);
-      color: white;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-left: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-
-      .hero {
-        padding: 2rem;
-      }
-
-      .buttons {
-        flex-direction: column;
-      }
-
-      .btn {
-        text-align: center;
-      }
-    }
+    @media (max-width: 560px) { .features, .stack { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
   </style>
 </head>
 <body>
-  <header>
+  <nav>
     <div class="container">
-      <h1>📋 Sistema de Controle de Tarefas e Projetos</h1>
-      <p>Gerenciamento visual de projetos com quadro Kanban</p>
+      <a class="logo" href="#"><span class="mark">T</span> Taskora</a>
+      <div class="links">
+        <a href="#recursos">Recursos</a>
+        <a href="#telas">Telas</a>
+        <a href="#stack">Tecnologias</a>
+        <a href="#executar">Como executar</a>
+      </div>
+      <a class="btn btn-ghost" style="padding:8px 14px;font-size:14px" href="https://github.com/joaogpnfs/tarefas-gestor" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="pill">🎓 <b>UniFil 2026</b> · Engenharia de Software · PDS I e II</span>
+      <h1>Tarefas e projetos com a <em>clareza do Notion</em> e o <em>fluxo do Trello</em></h1>
+      <p class="lead">O Taskora organiza a equipe em páginas de projeto com capa e ícone, quadro Kanban com arrastar e soltar, tabela, lista e calendário. Tudo salvo em um banco SQLite de verdade.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/joaogpnfs/tarefas-gestor" target="_blank" rel="noopener">Ver código no GitHub</a>
+        <a class="btn btn-ghost" href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/documentacao/documentacao-PDS.pdf" target="_blank" rel="noopener">📄 Documentação (PDF)</a>
+      </div>
+      <div class="shot"><img src="screenshots/projeto-quadro.png" alt="Página do projeto Portal Acadêmico com quadro Kanban"></div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <h2>Sobre o Projeto <span class="badge">UniFil 2026</span></h2>
-      <p>
-        Sistema web desenvolvido como projeto acadêmico da disciplina <strong>Projeto e Desenvolvimento de Sistemas I</strong> 
-        do curso de Engenharia de Software da Universidade Filadélfia (UniFil).
-      </p>
-      <p>
-        Inspirado em ferramentas como Trello, o sistema oferece uma interface intuitiva para gerenciamento de projetos 
-        e tarefas através de quadros Kanban, facilitando a organização e o acompanhamento visual do progresso das atividades.
-      </p>
-
-      <div class="buttons">
-        <a href="https://github.com/joaogpnfs/tarefas-gestor" class="btn btn-primary" target="_blank">
-          📦 Ver no GitHub
-        </a>
-        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/documentacao/documentacao.md" class="btn btn-secondary" target="_blank">
-          📚 Documentação Técnica
-        </a>
-        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/README.md" class="btn btn-secondary" target="_blank">
-          📖 README
-        </a>
+  <section id="recursos">
+    <div class="container center">
+      <div class="eyebrow">Recursos</div>
+      <h2>Tudo o que uma equipe pequena precisa</h2>
+      <p class="sub">CRUD completo de projetos, tarefas e membros, com quatro formas de enxergar o trabalho.</p>
+      <div class="features" style="text-align:left">
+        <div class="card"><div class="ic">📋</div><h3>Quadro Kanban</h3><p>Listas A fazer, Em andamento e Concluído. Arraste o cartão e o status é salvo no banco na hora.</p></div>
+        <div class="card"><div class="ic">🗂️</div><h3>Quatro visualizações</h3><p>Alterne entre quadro, tabela, lista e calendário mensal no mesmo projeto.</p></div>
+        <div class="card"><div class="ic">🪟</div><h3>Detalhe do cartão</h3><p>Responsável, etiquetas coloridas, prazo, descrição, checklist e ações de mover, prioridade, capa e excluir.</p></div>
+        <div class="card"><div class="ic">🎨</div><h3>Páginas de projeto</h3><p>Emoji, capa em degradê, descrição editável e propriedades de status, membros, prazo e progresso.</p></div>
+        <div class="card"><div class="ic">📊</div><h3>Painel inicial</h3><p>Indicadores, gráficos por status e prioridade, minhas tarefas e prazos da semana.</p></div>
+        <div class="card"><div class="ic">🌗</div><h3>Modo escuro e busca</h3><p>Tema claro ou escuro salvo no navegador e busca global com Ctrl + K.</p></div>
       </div>
+    </div>
+  </section>
 
-      <div class="features">
-        <div class="feature">
-          <h3>📁 Gestão de Projetos</h3>
-          <p>CRUD completo com personalização de cores e estatísticas detalhadas.</p>
-        </div>
-        <div class="feature">
-          <h3>✅ Quadro Kanban</h3>
-          <p>Visualização de tarefas em três colunas: A fazer, Em andamento e Concluído.</p>
-        </div>
-        <div class="feature">
-          <h3>🏷️ Prioridades</h3>
-          <p>Sistema de prioridades com código de cores (Baixa, Média, Alta).</p>
-        </div>
-        <div class="feature">
-          <h3>👥 Gerenciamento de Equipe</h3>
-          <p>Cadastro de membros com atribuição de responsabilidades.</p>
-        </div>
-        <div class="feature">
-          <h3>🔍 Filtros Avançados</h3>
-          <p>Filtre tarefas por prioridade, responsável e status.</p>
-        </div>
-        <div class="feature">
-          <h3>📊 Dashboard</h3>
-          <p>Estatísticas gerais e identificação de tarefas atrasadas.</p>
-        </div>
+  <section id="telas" class="gallery">
+    <div class="container">
+      <div class="center">
+        <div class="eyebrow">Telas</div>
+        <h2>Veja o Taskora por dentro</h2>
+        <p class="sub">Capturas feitas com os dados de demonstração do <code>npm run seed</code>. Clique para ampliar.</p>
       </div>
-    </section>
-
-    <section class="tech-stack">
-      <h2>🛠️ Tecnologias Utilizadas</h2>
-      <div class="tech-grid">
-        <div class="tech-item">Node.js</div>
-        <div class="tech-item">Express</div>
-        <div class="tech-item">SQLite</div>
-        <div class="tech-item">HTML5</div>
-        <div class="tech-item">CSS3</div>
-        <div class="tech-item">JavaScript ES6+</div>
-        <div class="tech-item">Mocha + Chai</div>
-        <div class="tech-item">REST API</div>
+      <div class="grid2">
+        <figure><img src="screenshots/home-light.png" alt="Tela inicial" loading="lazy"><figcaption><b>Início</b>Indicadores, gráficos e prazos da semana.</figcaption></figure>
+        <figure><img src="screenshots/quadro-arrastando.png" alt="Arrastando um cartão" loading="lazy"><figcaption><b>Arrastar e soltar</b>O cartão muda de lista e o status é gravado.</figcaption></figure>
+        <figure><img src="screenshots/cartao-detalhe.png" alt="Detalhe do cartão" loading="lazy"><figcaption><b>Detalhe do cartão</b>Etiquetas, checklist, prazo e ações.</figcaption></figure>
+        <figure><img src="screenshots/projeto-tabela.png" alt="Visualização em tabela" loading="lazy"><figcaption><b>Tabela</b>Todas as propriedades das tarefas em colunas.</figcaption></figure>
+        <figure><img src="screenshots/calendario.png" alt="Visualização em calendário" loading="lazy"><figcaption><b>Calendário</b>Tarefas posicionadas pela data de entrega.</figcaption></figure>
+        <figure><img src="screenshots/projeto-quadro-dark.png" alt="Modo escuro" loading="lazy"><figcaption><b>Modo escuro</b>O mesmo quadro com o tema escuro.</figcaption></figure>
+        <figure><img src="screenshots/tarefas.png" alt="Todas as tarefas" loading="lazy"><figcaption><b>Todas as tarefas</b>Filtros por prioridade, responsável e projeto.</figcaption></figure>
+        <figure><img src="screenshots/membros.png" alt="Membros" loading="lazy"><figcaption><b>Membros</b>Galeria da equipe com cargo e tarefas.</figcaption></figure>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="info-section">
-      <h3>📋 Funcionalidades Principais</h3>
-      <ul>
-        <li><strong>Projetos:</strong> Criar, editar, visualizar e excluir projetos com cores personalizadas</li>
-        <li><strong>Tarefas:</strong> CRUD completo com título, descrição, status, prioridade, responsável e data de entrega</li>
-        <li><strong>Membros:</strong> Gerenciamento de equipe com validação de email e verificação de duplicidade</li>
-        <li><strong>Kanban:</strong> Visualização visual organizada por status das tarefas</li>
-        <li><strong>Filtros:</strong> Filtragem por prioridade, responsável e status</li>
-        <li><strong>Dashboard:</strong> Estatísticas gerais e lista de tarefas atrasadas</li>
-        <li><strong>Interface Responsiva:</strong> Design adaptável para desktop e mobile</li>
-        <li><strong>API REST:</strong> Endpoints completos para todas as operações</li>
-      </ul>
-    </section>
+  <section id="stack">
+    <div class="container">
+      <div class="eyebrow">Tecnologias</div>
+      <h2>TypeScript de ponta a ponta</h2>
+      <p class="sub">Frontend em React, API REST em Express e banco relacional SQLite com chaves estrangeiras e restrições.</p>
+      <div class="stack">
+        <div class="card"><h3>Frontend</h3><div class="tags"><span class="tag">React 19</span><span class="tag">TypeScript</span><span class="tag">Vite</span><span class="tag">Tailwind CSS</span><span class="tag">shadcn/ui</span><span class="tag">Radix UI</span><span class="tag">lucide-react</span><span class="tag">recharts</span><span class="tag">@dnd-kit</span><span class="tag">sonner</span></div></div>
+        <div class="card"><h3>Backend</h3><div class="tags"><span class="tag">Node.js</span><span class="tag">Express 5</span><span class="tag">TypeScript</span><span class="tag">API REST</span><span class="tag">better-sqlite3</span><span class="tag">SQLite</span></div></div>
+        <div class="card"><h3>Qualidade</h3><div class="tags"><span class="tag">Mocha</span><span class="tag">Chai</span><span class="tag">Supertest</span><span class="tag">tsx</span><span class="tag">28 testes</span><span class="tag">Git + GitHub</span></div></div>
+      </div>
+    </div>
+  </section>
 
-    <section class="info-section">
-      <h3>🚀 Como Executar</h3>
-      <p>Clone o repositório e instale as dependências:</p>
-      <pre style="background: var(--bg); padding: 1rem; border-radius: 8px; overflow-x: auto;"><code>git clone https://github.com/joaogpnfs/tarefas-gestor.git
-cd tarefas-gestor
+  <section id="executar" style="padding-top:20px">
+    <div class="container">
+      <div class="eyebrow">Como executar</div>
+      <h2>Rodando em poucos minutos</h2>
+      <div class="run">
+<pre><span class="c"># instalar dependências</span>
 npm install
-npm run seed  # Popular com dados de exemplo
-npm start     # Iniciar servidor na porta 4321</code></pre>
-      <p>Acesse <code>http://localhost:4321</code> no navegador.</p>
-    </section>
+cd web && npm install && cd ..
 
-    <section class="info-section">
-      <h3>🧪 Testes Automatizados</h3>
-      <p>O projeto inclui testes automatizados completos da API REST:</p>
-      <pre style="background: var(--bg); padding: 1rem; border-radius: 8px;"><code>npm test</code></pre>
-      <p>Cobertura de testes:</p>
-      <ul>
-        <li>Todas as operações CRUD (Create, Read, Update, Delete)</li>
-        <li>Validações de dados obrigatórios e formatos</li>
-        <li>Regras de negócio (status, prioridades, unicidade)</li>
-        <li>Filtros e consultas especializadas</li>
-        <li>Estatísticas e agregações do dashboard</li>
-      </ul>
-    </section>
+<span class="c"># compilar backend e frontend</span>
+npm run build
+cd web && npm run build && cd ..
 
-    <section class="info-section">
-      <h3>👨‍💻 Desenvolvedor</h3>
-      <p><strong>Nome:</strong> João Gabriel Pereira Nascimento Feitosa da Silva</p>
-      <p><strong>RA:</strong> 263466036</p>
-      <p><strong>Instituição:</strong> Universidade Filadélfia (UniFil)</p>
-      <p><strong>Curso:</strong> Engenharia de Software</p>
-      <p><strong>Disciplina:</strong> Projeto e Desenvolvimento de Sistemas I</p>
-      <p><strong>Ano:</strong> 2026</p>
-      <p><strong>Email:</strong> jgpnfeitosa57@gmail.com</p>
-    </section>
-
-    <section class="info-section">
-      <h3>📄 Documentação</h3>
-      <p>A documentação completa do projeto inclui:</p>
-      <ul>
-        <li>Requisitos funcionais e não funcionais</li>
-        <li>Regras de negócio</li>
-        <li>Casos de uso com diagramas</li>
-        <li>Diagrama de classes</li>
-        <li>Modelo Entidade-Relacionamento (MER)</li>
-        <li>Arquitetura do sistema</li>
-        <li>Análise de falhas e riscos (FMEA)</li>
-        <li>Plano de testes</li>
-        <li>Cronograma de desenvolvimento</li>
-        <li>Roteiro para vídeo de defesa</li>
-      </ul>
-      <p>
-        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/documentacao/documentacao.md" 
-           style="color: var(--primary); font-weight: 600;">
-          → Acessar Documentação Completa
-        </a>
-      </p>
-    </section>
-  </main>
+<span class="c"># criar o banco com dados de exemplo e iniciar</span>
+npm run seed
+npm start
+<span class="c"># abra http://localhost:4321</span></pre>
+        <div class="stats">
+          <div class="stat"><b>3</b><span>tabelas relacionadas: projetos, tarefas e membros</span></div>
+          <div class="stat"><b>17</b><span>endpoints REST com CRUD completo</span></div>
+          <div class="stat"><b>4</b><span>visualizações: quadro, tabela, lista e calendário</span></div>
+          <div class="stat"><b>28</b><span>testes de integração passando com <code>npm test</code></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <footer>
     <div class="container">
-      <p>&copy; 2026 João Gabriel Pereira Nascimento Feitosa da Silva | Universidade Filadélfia (UniFil)</p>
-      <p style="margin-top: 0.5rem;">
-        <a href="https://github.com/joaogpnfs/tarefas-gestor" 
-           style="color: white; text-decoration: none; opacity: 0.9;">
-          GitHub
-        </a>
-      </p>
+      <div><b style="color:var(--text)">João Gabriel Pereira Nascimento Feitosa da Silva</b> · RA 263466036<br>Engenharia de Software · Universidade Filadélfia (UniFil) · Londrina, 2026</div>
+      <div style="display:flex;gap:18px;align-items:center">
+        <a href="https://github.com/joaogpnfs/tarefas-gestor" target="_blank" rel="noopener">Repositório</a>
+        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/documentacao/documentacao.md" target="_blank" rel="noopener">Documentação</a>
+        <a href="https://github.com/joaogpnfs/tarefas-gestor/blob/main/README.md" target="_blank" rel="noopener">README</a>
+      </div>
     </div>
   </footer>
+
+  <div class="lightbox" id="lb"><img alt=""></div>
+  <script>
+    const lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
+    document.querySelectorAll('.gallery figure img, .shot img').forEach((img) => {
+      img.addEventListener('click', () => { lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add('open'); });
+    });
+    lb.addEventListener('click', () => lb.classList.remove('open'));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') lb.classList.remove('open'); });
+  </script>
 </body>
 </html>
