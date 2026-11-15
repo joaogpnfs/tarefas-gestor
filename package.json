@@ -2,11 +2,13 @@
   "name": "tarefas-gestor",
   "version": "1.0.0",
   "description": "Sistema de Controle de Tarefas e Projetos - Projeto acadêmico UniFil",
-  "main": "src/server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "test": "mocha test/**/*.test.js --timeout 10000",
-    "seed": "node src/seed.js"
+    "dev": "tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "mocha --require tsx/cjs test/**/*.test.ts --timeout 10000",
+    "seed": "tsx src/seed.ts"
   },
   "repository": {
     "type": "git",
@@ -28,8 +30,21 @@
     "express": "^5.3.0"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^12.2.0",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/chai": "^5.2.3",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.6",
+    "@types/supertest": "^7.2.1",
     "chai": "^6.3.0",
+    "md-to-pdf": "^5.2.5",
     "mocha": "^12.0.3",
-    "supertest": "^7.3.2"
+    "supertest": "^7.3.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }
