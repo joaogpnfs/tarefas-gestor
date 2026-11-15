@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Controle de Tarefas e Projetos</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <h1 class="logo">📋 Controle de Projetos</h1>
+      <div class="nav-links">
+        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="projetos">Projetos</button>
+        <button class="nav-btn" data-page="membros">Membros</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container main-content">
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page active">
+      <div class="page-header">
+        <h2>Dashboard</h2>
+        <p class="subtitle">Visão geral do sistema</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📁</div>
+          <div class="stat-info">
+            <h3 id="stat-projetos">0</h3>
+            <p>Projetos</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <h3 id="stat-tarefas">0</h3>
+            <p>Tarefas Totais</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <h3 id="stat-membros">0</h3>
+            <p>Membros</p>
+          </div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-info">
+            <h3 id="stat-atrasadas">0</h3>
+            <p>Tarefas Atrasadas</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-grid">
+        <div class="status-card status-todo">
+          <h3>A Fazer</h3>
+          <p class="status-count" id="count-a-fazer">0</p>
+        </div>
+        <div class="status-card status-doing">
+          <h3>Em Andamento</h3>
+          <p class="status-count" id="count-em-andamento">0</p>
+        </div>
+        <div class="status-card status-done">
+          <h3>Concluído</h3>
+          <p class="status-count" id="count-concluido">0</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Tarefas Atrasadas</h3>
+        <div id="tarefas-atrasadas-list" class="tarefas-atrasadas-list">
+          <p class="empty-state">Nenhuma tarefa atrasada 🎉</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projetos Page -->
+    <div id="projetos-page" class="page">
+      <div class="page-header">
+        <h2>Projetos</h2>
+        <button class="btn btn-primary" onclick="app.showProjetoModal()">+ Novo Projeto</button>
+      </div>
+
+      <div id="projetos-list" class="projetos-grid">
+        <p class="empty-state">Nenhum projeto cadastrado</p>
+      </div>
+
+      <!-- Modal Ver Projeto -->
+      <div id="view-projeto-modal" class="modal">
+        <div class="modal-content modal-large">
+          <div class="modal-header">
+            <h2 id="view-projeto-nome"></h2>
+            <button class="close-btn" onclick="app.closeModal('view-projeto-modal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p id="view-projeto-descricao"></p>
+            
+            <div class="projeto-actions">
+              <button class="btn btn-secondary" onclick="app.editProjeto()">✏️ Editar</button>
+              <button class="btn btn-primary" onclick="app.showTarefaModal()">+ Nova Tarefa</button>
+            </div>
+
+            <div class="filters">
+              <select id="filter-status" class="filter-select" onchange="app.loadTarefas()">
+                <option value="">Todos os Status</option>
+                <option value="A fazer">A fazer</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Concluído">Concluído</option>
+              </select>
+              <select id="filter-prioridade" class="filter-select" onchange="app.loadTarefas()">
+                <option value="">Todas as Prioridades</option>
+                <option value="Baixa">Baixa</option>
+                <option value="Média">Média</option>
+                <option value="Alta">Alta</option>
+              </select>
+              <select id="filter-responsavel" class="filter-select" onchange="app.loadTarefas()">
+                <option value="">Todos os Responsáveis</option>
+              </select>
+            </div>
+
+            <div id="kanban-board" class="kanban-board">
+              <div class="kanban-column">
+                <h3 class="kanban-header status-todo">A Fazer</h3>
+                <div id="kanban-a-fazer" class="kanban-tasks"></div>
+              </div>
+              <div class="kanban-column">
+                <h3 class="kanban-header status-doing">Em Andamento</h3>
+                <div id="kanban-em-andamento" class="kanban-tasks"></div>
+              </div>
+              <div class="kanban-column">
+                <h3 class="kanban-header status-done">Concluído</h3>
+                <div id="kanban-concluido" class="kanban-tasks"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Membros Page -->
+    <div id="membros-page" class="page">
+      <div class="page-header">
+        <h2>Membros da Equipe</h2>
+        <button class="btn btn-primary" onclick="app.showMembroModal()">+ Novo Membro</button>
+      </div>
+
+      <div id="membros-list" class="membros-grid">
+        <p class="empty-state">Nenhum membro cadastrado</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Projeto -->
+  <div id="projeto-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="projeto-modal-title">Novo Projeto</h2>
+        <button class="close-btn" onclick="app.closeModal('projeto-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="projeto-form" onsubmit="app.saveProjeto(event)">
+          <input type="hidden" id="projeto-id">
+          <div class="form-group">
+            <label for="projeto-nome">Nome do Projeto *</label>
+            <input type="text" id="projeto-nome" required>
+          </div>
+          <div class="form-group">
+            <label for="projeto-descricao">Descrição</label>
+            <textarea id="projeto-descricao" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="projeto-cor">Cor</label>
+            <input type="color" id="projeto-cor" value="#3B82F6">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="app.closeModal('projeto-modal')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tarefa -->
+  <div id="tarefa-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="tarefa-modal-title">Nova Tarefa</h2>
+        <button class="close-btn" onclick="app.closeModal('tarefa-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="tarefa-form" onsubmit="app.saveTarefa(event)">
+          <input type="hidden" id="tarefa-id">
+          <input type="hidden" id="tarefa-projeto-id">
+          <div class="form-group">
+            <label for="tarefa-titulo">Título *</label>
+            <input type="text" id="tarefa-titulo" required>
+          </div>
+          <div class="form-group">
+            <label for="tarefa-descricao">Descrição</label>
+            <textarea id="tarefa-descricao" rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tarefa-status">Status</label>
+              <select id="tarefa-status">
+                <option value="A fazer">A fazer</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Concluído">Concluído</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="tarefa-prioridade">Prioridade</label>
+              <select id="tarefa-prioridade">
+                <option value="Baixa">Baixa</option>
+                <option value="Média" selected>Média</option>
+                <option value="Alta">Alta</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tarefa-responsavel">Responsável</label>
+              <select id="tarefa-responsavel">
+                <option value="">Sem responsável</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="tarefa-data-entrega">Data de Entrega</label>
+              <input type="date" id="tarefa-data-entrega">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="app.closeModal('tarefa-modal')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Membro -->
+  <div id="membro-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="membro-modal-title">Novo Membro</h2>
+        <button class="close-btn" onclick="app.closeModal('membro-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="membro-form" onsubmit="app.saveMembro(event)">
+          <input type="hidden" id="membro-id">
+          <div class="form-group">
+            <label for="membro-nome">Nome *</label>
+            <input type="text" id="membro-nome" required>
+          </div>
+          <div class="form-group">
+            <label for="membro-email">Email *</label>
+            <input type="email" id="membro-email" required>
+          </div>
+          <div class="form-group">
+            <label for="membro-cargo">Cargo</label>
+            <input type="text" id="membro-cargo">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="app.closeModal('membro-modal')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
