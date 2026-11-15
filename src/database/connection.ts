@@ -5,7 +5,8 @@ let db: Database.Database | null = null;
 
 export function getDatabase(): Database.Database {
   if (!db) {
-    db = initializeDatabase();
+    const customPath = process.env.DATABASE_PATH;
+    db = customPath ? initializeDatabase(customPath) : initializeDatabase();
   }
   return db;
 }

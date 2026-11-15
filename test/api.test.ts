@@ -10,6 +10,7 @@ let app: express.Application;
 describe('API REST - Testes de Integração', () => {
   before(() => {
     process.env.NODE_ENV = 'test';
+    process.env.DATABASE_PATH = testDbPath;
     initializeDatabase(testDbPath);
     app = require('../src/server').default;
   });
