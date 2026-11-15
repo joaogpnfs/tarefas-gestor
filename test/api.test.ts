@@ -288,6 +288,78 @@ describe('API REST - Testes de Integração', () => {
     });
   });
 
+  describe('Campos opcionais (emoji, capa, etiquetas, checklist)', () => {
+    let projetoId: number, tarefaId: number;
+
+    it('POST /api/projetos - deve usar valores padrão quando campos opcionais não são enviados', async () => {
+      const res = await request(app)
+        .post('/api/projetos')
+        .send({ nome: 'Projeto sem extras' });
+
+      expect(res.status).to.equal(201);
+      expect(res.body.emoji).to.equal('📁');
+      expect(res.body.capa).to.equal(null);
+      expect(res.body.prazo).to.equal(null);
+    });
+
+    it('POST /api/projetos - deve salvar emoji, capa e prazo', async () => {
+      const res = await request(app)
+        .post('/api/projetos')
+        .send({ nome: 'Projeto com capa', emoji: '🚀', capa: 'aurora', prazo: '2026-12-15' });
+
+      expect(res.status).to.equal(201);
+      expect(res.body.emoji).to.equal('🚀');
+      expect(res.body.capa).to.equal('aurora');
+      expect(res.body.prazo).to.equal('2026-12-15');
+      projetoId = res.body.id;
+    });
+
+    it('PUT /api/projetos/:id - deve manter emoji e capa quando não enviados', async () => {
+      const res = await request(app)
+        .put(`/api/projetos/${projetoId}`)
+        .send({ nome: 'Projeto renomeado' });
+
+      expect(res.status).to.equal(200);
+      expect(res.body.nome).to.equal('Projeto renomeado');
+      expect(res.body.emoji).to.equal('🚀');
+      expect(res.body.capa).to.equal('aurora');
+    });
+
+    it('POST /api/tarefas - deve normalizar etiquetas e salvar checklist', async () => {
+      const res = await request(app)
+        .post('/api/tarefas')
+        .send({
+          projeto_id: projetoId,
+          titulo: 'Tarefa com etiquetas',
+          etiquetas: ['frontend', ' UX ', 'frontend'],
+          capa: '#22C55E',
+          checklist_total: 4,
+          checklist_feitos: 1,
+          comentarios: 2
+        });
+
+      expect(res.status).to.equal(201);
+      expect(res.body.etiquetas).to.equal('frontend,UX');
+      expect(res.body.capa).to.equal('#22C55E');
+      expect(res.body.checklist_total).to.equal(4);
+      expect(res.body.checklist_feitos).to.equal(1);
+      expect(res.body.comentarios).to.equal(2);
+      expect(res.body.projeto_emoji).to.equal('🚀');
+      tarefaId = res.body.id;
+    });
+
+    it('PUT /api/tarefas/:id - deve atualizar etiquetas sem alterar outros campos', async () => {
+      const res = await request(app)
+        .put(`/api/tarefas/${tarefaId}`)
+        .send({ etiquetas: 'backend, api' });
+
+      expect(res.status).to.equal(200);
+      expect(res.body.etiquetas).to.equal('backend,api');
+      expect(res.body.checklist_total).to.equal(4);
+      expect(res.body.titulo).to.equal('Tarefa com etiquetas');
+    });
+  });
+
   describe('Dashboard', () => {
     it('GET /api/dashboard - deve retornar estatísticas gerais', async () => {
       const res = await request(app).get('/api/dashboard');
