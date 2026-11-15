@@ -491,42 +491,59 @@ tarefas-gestor/
 
 | Tecnologia | Versão | Propósito |
 |------------|--------|-----------|
-| Node.js | 18+ | Ambiente de execução JavaScript |
-| Express | 4.18+ | Framework web para criação da API |
-| better-sqlite3 | 9.0+ | Driver SQLite para Node.js |
+| Node.js | 18+ | Ambiente de execução JavaScript/TypeScript |
+| TypeScript | 7.0+ | Superset tipado, maior segurança e manutenibilidade |
+| Express | 5.3+ | Framework web para criação de APIs REST |
+| better-sqlite3 | 13.2+ | Driver SQLite síncrono para Node.js |
 | cors | 2.8+ | Middleware para CORS |
+| tsx | 4.23+ | Execução de TypeScript com hot-reload |
 
 ### Frontend
 
-| Tecnologia | Propósito |
-|------------|-----------|
-| HTML5 | Estrutura das páginas |
-| CSS3 | Estilização e layout responsivo |
-| JavaScript (ES6+) | Interatividade e comunicação com API |
+| Tecnologia | Versão | Propósito |
+|------------|--------|-----------|
+| React | 19+ | Biblioteca para construção de interfaces reativas |
+| Vite | 8+ | Build tool e dev server ultrarrápido |
+| TypeScript | 7.0+ | Tipagem estática para JavaScript |
+| Tailwind CSS | 3.4+ | Framework CSS utility-first para estilização rápida |
+| shadcn/ui | - | Componentes acessíveis baseados em Radix UI |
+| Lucide React | - | Biblioteca de ícones modernos |
+| Recharts | - | Biblioteca de gráficos para React |
+| @dnd-kit | - | Drag-and-drop para quadro Kanban |
+| Sonner | - | Toast notifications elegantes |
+| React Router | 7+ | Roteamento SPA |
 
 ### Testes
 
 | Tecnologia | Versão | Propósito |
 |------------|--------|-----------|
-| Mocha | 10+ | Framework de testes |
-| Chai | 4+ | Biblioteca de asserções |
-| Supertest | 6+ | Testes de API HTTP |
+| Mocha | 12+ | Framework de testes |
+| Chai | 6+ | Biblioteca de asserções BDD/TDD |
+| Supertest | 7+ | Testes de integração HTTP |
 
 ### Ferramentas de Desenvolvimento
 
-- Git/GitHub: Controle de versão
-- Visual Studio Code: Editor de código
+- Git/GitHub: Controle de versão e colaboração
+- TypeScript: Desenvolvimento com type-safety
+- Visual Studio Code: Editor de código com suporte TypeScript
 - GitHub Pages: Hospedagem da landing page
+- npm: Gerenciamento de dependências
 
 ### Justificativa das Escolhas
 
-**Node.js + Express:** Plataforma madura, grande comunidade, ideal para APIs REST, JavaScript full-stack.
+**TypeScript:** Adiciona tipagem estática ao JavaScript, reduzindo erros em tempo de desenvolvimento, melhorando a manutenibilidade e fornecendo melhor suporte de IDE através de IntelliSense.
 
-**SQLite:** Banco de dados leve, sem necessidade de servidor separado, arquivo único, ideal para desenvolvimento e demonstração.
+**React + Vite:** React oferece componentes reutilizáveis e arquitetura declarativa. Vite proporciona desenvolvimento rápido com hot-module replacement instantâneo e builds otimizados.
 
-**better-sqlite3:** API síncrona mais simples que sqlite3, melhor performance para operações sequenciais.
+**Tailwind CSS + shadcn/ui:** Tailwind permite estilização rápida com classes utilitárias. shadcn/ui fornece componentes prontos e acessíveis baseados em Radix UI, acelerando o desenvolvimento com qualidade profissional.
 
-**Vanilla JavaScript:** Sem frameworks no frontend para focar nos fundamentos e reduzir complexidade.
+**Node.js + Express + TypeScript:** Stack JavaScript/TypeScript full-stack, compartilhando tipos entre frontend e backend, facilitando manutenção e reduzindo erros de integração.
+
+**SQLite + better-sqlite3:** Banco de dados embarcado, sem necessidade de servidor separado, API síncrona simplificada, ideal para desenvolvimento e demonstração do sistema.
+
+**@dnd-kit:** Biblioteca moderna de drag-and-drop com ótima experiência de desenvolvedor, acessibilidade nativa e performance otimizada para o quadro Kanban.
+
+**Recharts:** Integração nativa com React, gráficos responsivos e customizáveis para visualização de dados no dashboard.
 
 ---
 
