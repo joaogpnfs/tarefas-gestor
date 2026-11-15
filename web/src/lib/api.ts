@@ -13,6 +13,9 @@ export interface Projeto {
   nome: string;
   descricao: string | null;
   cor: string;
+  emoji?: string;
+  capa?: string | null;
+  prazo?: string | null;
   criado_em: string;
   atualizado_em: string;
   stats?: {
@@ -32,9 +35,16 @@ export interface Tarefa {
   prioridade: 'Baixa' | 'Média' | 'Alta';
   responsavel_id: number | null;
   data_entrega: string | null;
+  etiquetas?: string;
+  capa?: string | null;
+  checklist_total?: number;
+  checklist_feitos?: number;
+  comentarios?: number;
   criado_em: string;
   atualizado_em: string;
   projeto_nome?: string;
+  projeto_emoji?: string;
+  projeto_cor?: string;
   responsavel_nome?: string | null;
 }
 
@@ -63,7 +73,14 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> 
   });
   
   if (!res.ok) {
-    throw new Error(`HTTP error! status: ${res.status}`);
+    let message = `Erro HTTP ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body?.error) message = body.error;
+    } catch {
+      /* resposta sem corpo JSON */
+    }
+    throw new Error(message);
   }
   
   if (res.status === 204) {
