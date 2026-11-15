@@ -127,7 +127,7 @@ function seed() {
         { titulo: 'Escrever capítulo de metodologia', descricao: 'Descrever abordagem ágil, ferramentas e critérios de avaliação.', status: 'A fazer', prioridade: 'Alta', resp: 'João', prazo: 3, etiquetas: ['docs'], checklist: [1, 4] },
         { titulo: 'Questionário de validação com alunos', descricao: 'Aplicar formulário SUS para medir usabilidade.', status: 'A fazer', prioridade: 'Média', resp: 'Mariana', prazo: 9, etiquetas: ['pesquisa', 'ux'] },
         { titulo: 'Slides da banca', descricao: 'Apresentação de 15 minutos com demonstração ao vivo.', status: 'A fazer', prioridade: 'Média', resp: 'João', prazo: 19, etiquetas: ['docs', 'design'] },
-        { titulo: 'Ajustar formatação ABNT', descricao: 'Referências, sumário automático e numeração de páginas.', status: 'A fazer', prioridade: 'Baixa', resp: 'Beatriz', prazo: -1, etiquetas: ['docs'] },
+        { titulo: 'Ajustar formatação ABNT', descricao: 'Referências, sumário automático e numeração de páginas.', status: 'A fazer', prioridade: 'Baixa', resp: 'João', prazo: -1, etiquetas: ['docs'] },
       ],
     },
   ];
