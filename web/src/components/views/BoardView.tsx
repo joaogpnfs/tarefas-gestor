@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  DndContext, DragOverlay, KeyboardSensor, PointerSensor, pointerWithin, rectIntersection, useDraggable, useDroppable, useSensor, useSensors,
+  DndContext, DragOverlay, KeyboardSensor, MouseSensor, TouchSensor, pointerWithin, rectIntersection, useDraggable, useDroppable, useSensor, useSensors,
 } from '@dnd-kit/core'
 import type { CollisionDetection, DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
 
@@ -26,7 +26,7 @@ function DraggableCard({ tarefa }: { tarefa: Tarefa }) {
       {...attributes}
       {...listeners}
       onClick={() => openTask(tarefa.id)}
-      className="cursor-pointer touch-none outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+      className="cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg md:touch-none"
     >
       <TaskCard tarefa={tarefa} dragging={isDragging} />
     </div>
@@ -44,13 +44,13 @@ function Lane({ status, tarefas, placeholderHeight, onAdd }: {
   const { setNodeRef, isOver } = useDroppable({ id: status })
   const meta = STATUS_META[status]
   return (
-    <div ref={setNodeRef} className={cn('flex max-h-full w-[300px] shrink-0 flex-col rounded-xl transition-shadow', meta.lane, isOver && 'ring-2 ring-primary/40')}>
+    <div ref={setNodeRef} className={cn('flex max-h-full w-[85vw] shrink-0 snap-start flex-col rounded-xl transition-shadow md:w-[300px] md:snap-align-none', meta.lane, isOver && 'ring-2 ring-primary/40')}>
       <div className="flex items-center gap-2 px-3 pb-2 pt-3">
         <span className={cn('h-2.5 w-2.5 rounded-full', meta.accent)} />
         <span className="text-[13px] font-semibold">{LANE_EMOJI[status]} {status}</span>
         <span className="rounded-full bg-black/[0.06] px-1.5 text-[11px] font-semibold text-muted-foreground dark:bg-white/10">{tarefas.length}</span>
-        <button className="ml-auto rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10"><MoreHorizontal className="h-4 w-4" /></button>
-        <button onClick={onAdd} className="rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10"><Plus className="h-4 w-4" /></button>
+        <button className="ml-auto flex h-10 w-10 items-center justify-center rounded text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 md:h-auto md:w-auto md:p-1"><MoreHorizontal className="h-4 w-4" /></button>
+        <button onClick={onAdd} className="flex h-10 w-10 items-center justify-center rounded text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 md:h-auto md:w-auto md:p-1"><Plus className="h-4 w-4" /></button>
       </div>
       <div className="scrollbar-thin flex min-h-[60px] flex-1 flex-col gap-2 overflow-y-auto px-2 pb-1">
         {tarefas.map((t) => <DraggableCard key={t.id} tarefa={t} />)}
@@ -59,7 +59,7 @@ function Lane({ status, tarefas, placeholderHeight, onAdd }: {
         )}
       </div>
       <button onClick={onAdd}
-        className="m-2 mt-1 flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10">
+        className="m-2 mt-1 flex min-h-10 items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/10 md:min-h-0">
         <Plus className="h-4 w-4" /> Adicionar cartão
       </button>
     </div>
@@ -72,7 +72,8 @@ export default function BoardView({ tarefas, projetoId }: { tarefas: Tarefa[]; p
   const [activeHeight, setActiveHeight] = useState(90)
   const [over, setOver] = useState<Status | null>(null)
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
     useSensor(KeyboardSensor),
   )
 
@@ -98,7 +99,7 @@ export default function BoardView({ tarefas, projetoId }: { tarefas: Tarefa[]; p
   return (
     <DndContext sensors={sensors} collisionDetection={collision} onDragStart={onStart} onDragOver={onOver} onDragEnd={onEnd}
       onDragCancel={() => { setActive(null); setOver(null) }}>
-      <div className="scrollbar-thin flex h-[calc(100vh-120px)] min-h-[520px] items-start gap-3 overflow-x-auto pb-4">
+      <div className="scrollbar-thin flex h-[calc(100dvh-14rem)] min-h-[360px] snap-x snap-mandatory items-start gap-3 overflow-x-auto overscroll-x-contain pb-4 md:h-[calc(100vh-120px)] md:min-h-[520px] md:snap-none">
         {STATUSES.map((s) => (
           <Lane
             key={s}
@@ -110,7 +111,7 @@ export default function BoardView({ tarefas, projetoId }: { tarefas: Tarefa[]; p
         ))}
       </div>
       <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
-        {active ? <div className="w-[284px]"><TaskCard tarefa={active} overlay /></div> : null}
+        {active ? <div className="w-[min(284px,calc(85vw-16px))]"><TaskCard tarefa={active} overlay /></div> : null}
       </DragOverlay>
     </DndContext>
   )
