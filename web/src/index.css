@@ -72,6 +72,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+  html, body, #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "cv11", "ss01";
@@ -99,7 +103,7 @@
   }
 
   .nav-item {
-    @apply flex h-[30px] w-full items-center gap-2 rounded-md px-2 text-sm font-medium text-sidebar-foreground transition-colors hover:bg-sidebar-hover;
+    @apply flex h-10 w-full items-center gap-2 rounded-md px-2 text-sm font-medium text-sidebar-foreground transition-colors hover:bg-sidebar-hover md:h-[30px];
   }
   .nav-item[data-active="true"] {
     @apply bg-sidebar-hover text-foreground;
