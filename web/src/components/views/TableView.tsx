@@ -70,6 +70,44 @@ function Row({ t, showProject }: { t: Tarefa; showProject?: boolean }) {
   )
 }
 
+function MobileCard({ t, showProject }: { t: Tarefa; showProject?: boolean }) {
+  const { openTask } = useData()
+  const total = t.checklist_total ?? 0
+  const feitos = Math.min(t.checklist_feitos ?? 0, total)
+  const tags = parseTags(t.etiquetas)
+  return (
+    <button
+      type="button"
+      onClick={() => openTask(t.id)}
+      className="flex w-full flex-col gap-2 rounded-lg border bg-card px-3 py-3 text-left shadow-card"
+    >
+      <div className="flex items-start gap-2">
+        <span className="text-[15px] leading-none">{t.projeto_emoji ?? '📄'}</span>
+        <span className={cn('min-w-0 flex-1 text-sm font-medium leading-snug', t.status === 'Concluído' && 'text-muted-foreground line-through')}>{t.titulo}</span>
+      </div>
+      {showProject && t.projeto_nome && (
+        <span className="truncate text-xs text-muted-foreground">{t.projeto_nome}</span>
+      )}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <StatusPill status={t.status} />
+        <PriorityPill prioridade={t.prioridade} />
+        {tags.slice(0, 2).map((tag) => <TagPill key={tag} tag={tag} />)}
+      </div>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        {t.responsavel_nome ? (
+          <span className="flex items-center gap-1.5"><Avatar name={t.responsavel_nome} size={20} />{t.responsavel_nome.split(' ')[0]}</span>
+        ) : <span>—</span>}
+        <span className="ml-auto">
+          <span className={cn(isOverdue(t) && 'font-medium text-[#e03e3e]', t.status === 'Concluído' && 'text-muted-foreground')}>
+            {formatShort(t.data_entrega)}
+          </span>
+        </span>
+        {total > 0 && <span>{feitos}/{total}</span>}
+      </div>
+    </button>
+  )
+}
+
 export default function TableView({ tarefas, showProject, groupByStatus, projetoId }: {
   tarefas: Tarefa[]
   showProject?: boolean
@@ -100,43 +138,69 @@ export default function TableView({ tarefas, showProject, groupByStatus, projeto
     : [{ key: 'all', items: tarefas }]
 
   return (
-    <div className="scrollbar-thin overflow-x-auto">
-      <table className="w-full border-collapse border-t">
-        {header}
+    <>
+      <div className="space-y-4 md:hidden">
         {groups.map((g) => (
-          <tbody key={g.key}>
+          <section key={g.key}>
             {g.key !== 'all' && (
-              <tr>
-                <td colSpan={cols} className="pb-1 pt-5">
-                  <button onClick={() => setCollapsed((c) => ({ ...c, [g.key]: !c[g.key] }))}
-                    className="flex items-center gap-2 rounded px-1 py-0.5 text-sm hover:bg-accent">
-                    {collapsed[g.key] ? <ChevronRight className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
-                    <StatusPill status={g.key} />
-                    <span className="text-muted-foreground">{g.items.length}</span>
-                  </button>
-                </td>
-              </tr>
+              <button onClick={() => setCollapsed((c) => ({ ...c, [g.key]: !c[g.key] }))}
+                className="mb-2 flex min-h-10 items-center gap-2 rounded px-1 py-0.5 text-sm">
+                {collapsed[g.key] ? <ChevronRight className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                <StatusPill status={g.key} />
+                <span className="text-muted-foreground">{g.items.length}</span>
+              </button>
             )}
-            {!collapsed[g.key] && g.items.map((t) => <Row key={t.id} t={t} showProject={showProject} />)}
             {!collapsed[g.key] && (
-              <tr>
-                <td colSpan={cols} className="border-b">
-                  <button onClick={() => newTask({ projeto_id: projetoId, ...(g.key !== 'all' ? { status: g.key } : {}) })}
-                    className="flex h-9 w-full items-center gap-1.5 px-2 text-sm text-muted-foreground hover:bg-accent/60">
-                    <Plus className="h-4 w-4" /> Novo
-                  </button>
-                </td>
-              </tr>
+              <div className="space-y-2">
+                {g.items.map((t) => <MobileCard key={t.id} t={t} showProject={showProject} />)}
+                <button onClick={() => newTask({ projeto_id: projetoId, ...(g.key !== 'all' ? { status: g.key } : {}) })}
+                  className="flex min-h-10 w-full items-center gap-1.5 rounded-lg border border-dashed px-3 text-sm text-muted-foreground hover:bg-accent/60">
+                  <Plus className="h-4 w-4" /> Novo
+                </button>
+              </div>
             )}
-            {g.key !== 'all' && !collapsed[g.key] && g.items.length > 0 && (
-              <tr><td colSpan={cols} className="px-2 py-1 text-[11px] text-muted-foreground">
-                <span className={cn('mr-1 inline-block h-1.5 w-1.5 rounded-full', `dot-${STATUS_META[g.key].color}`)} />
-                CONTAGEM {g.items.length}
-              </td></tr>
-            )}
-          </tbody>
+          </section>
         ))}
-      </table>
-    </div>
+      </div>
+
+      <div className="scrollbar-thin hidden overflow-x-auto md:block">
+        <table className="w-full border-collapse border-t">
+          {header}
+          {groups.map((g) => (
+            <tbody key={g.key}>
+              {g.key !== 'all' && (
+                <tr>
+                  <td colSpan={cols} className="pb-1 pt-5">
+                    <button onClick={() => setCollapsed((c) => ({ ...c, [g.key]: !c[g.key] }))}
+                      className="flex items-center gap-2 rounded px-1 py-0.5 text-sm hover:bg-accent">
+                      {collapsed[g.key] ? <ChevronRight className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                      <StatusPill status={g.key} />
+                      <span className="text-muted-foreground">{g.items.length}</span>
+                    </button>
+                  </td>
+                </tr>
+              )}
+              {!collapsed[g.key] && g.items.map((t) => <Row key={t.id} t={t} showProject={showProject} />)}
+              {!collapsed[g.key] && (
+                <tr>
+                  <td colSpan={cols} className="border-b">
+                    <button onClick={() => newTask({ projeto_id: projetoId, ...(g.key !== 'all' ? { status: g.key } : {}) })}
+                      className="flex h-9 w-full items-center gap-1.5 px-2 text-sm text-muted-foreground hover:bg-accent/60">
+                      <Plus className="h-4 w-4" /> Novo
+                    </button>
+                  </td>
+                </tr>
+              )}
+              {g.key !== 'all' && !collapsed[g.key] && g.items.length > 0 && (
+                <tr><td colSpan={cols} className="px-2 py-1 text-[11px] text-muted-foreground">
+                  <span className={cn('mr-1 inline-block h-1.5 w-1.5 rounded-full', `dot-${STATUS_META[g.key].color}`)} />
+                  CONTAGEM {g.items.length}
+                </td></tr>
+              )}
+            </tbody>
+          ))}
+        </table>
+      </div>
+    </>
   )
 }
