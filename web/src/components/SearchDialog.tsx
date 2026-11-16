@@ -26,7 +26,7 @@ export default function SearchDialog() {
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/30 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content aria-describedby={undefined}
-          className="fixed left-1/2 top-[14vh] z-50 w-[calc(100%-2rem)] max-w-[620px] -translate-x-1/2 overflow-hidden rounded-xl border bg-popover shadow-pop data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-[0.98]">
+          className="fixed inset-0 z-50 flex h-dvh w-full max-h-dvh max-w-none translate-x-0 flex-col overflow-hidden rounded-none border bg-popover shadow-pop data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-[0.98] md:inset-auto md:left-1/2 md:top-[14vh] md:h-auto md:max-h-none md:w-[calc(100%-2rem)] md:max-w-[620px] md:-translate-x-1/2 md:rounded-xl">
           <DialogPrimitive.Title className="sr-only">Buscar</DialogPrimitive.Title>
           <div className="flex items-center gap-3 border-b px-4">
             <Search className="h-4 w-4 text-muted-foreground" />
@@ -34,7 +34,7 @@ export default function SearchDialog() {
               className="h-12 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
             <kbd className="rounded border px-1.5 text-[10px] text-muted-foreground">Esc</kbd>
           </div>
-          <div className="scrollbar-thin max-h-[420px] overflow-y-auto p-2">
+          <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto p-2 md:max-h-[420px] md:flex-none">
             {results.ps.length > 0 && <div className="px-2 pb-1 pt-2 text-[11px] font-semibold text-muted-foreground">Projetos</div>}
             {results.ps.map((p) => (
               <button key={p.id} onClick={() => { navigate(`/projetos/${p.id}`); close() }}

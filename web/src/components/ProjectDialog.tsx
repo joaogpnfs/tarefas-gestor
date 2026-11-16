@@ -39,7 +39,7 @@ export default function ProjectDialog() {
 
   return (
     <Dialog open={projectDialogOpen} onOpenChange={setProjectDialogOpen}>
-      <DialogContent className="max-w-[560px] overflow-hidden p-0" aria-describedby={undefined}>
+      <DialogContent className="overflow-y-auto p-0 md:max-w-[560px] md:overflow-hidden" aria-describedby={undefined}>
         <form onSubmit={submit}>
           <div className="relative h-28" style={{ background: coverCss(capa, cor) }}>
             <div className="cover-pattern absolute inset-0 opacity-70" />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   AlignLeft, ArrowRightLeft, Calendar, CheckSquare, CreditCard, Flag, FolderKanban, MessageSquare,
   Palette, Tag, Trash2, User, X, Plus, Circle,
@@ -24,7 +24,7 @@ function SideButton({ icon: Icon, children, ...props }: React.ButtonHTMLAttribut
     <button
       {...props}
       className={cn(
-        'flex h-8 w-full items-center gap-2 rounded-md bg-muted px-2.5 text-left text-[13px] font-medium transition-colors hover:bg-accent',
+        'flex h-10 w-full items-center gap-2 rounded-md bg-muted px-2.5 text-left text-[13px] font-medium transition-colors hover:bg-accent md:h-8',
         props.className,
       )}
     >
@@ -53,11 +53,23 @@ function DetailView({ tarefa }: { tarefa: Tarefa }) {
   const total = tarefa.checklist_total ?? 0
   const feitos = Math.min(tarefa.checklist_feitos ?? 0, total)
   const projeto = projetos.find((p) => p.id === tarefa.projeto_id)
+  const tituloRef = useRef<HTMLTextAreaElement>(null)
+
+  const resizeTitulo = () => {
+    const el = tituloRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }
 
   useEffect(() => {
     setTitulo(tarefa.titulo)
     setDescricao(tarefa.descricao ?? '')
   }, [tarefa.id, tarefa.titulo, tarefa.descricao])
+
+  useEffect(() => {
+    resizeTitulo()
+  }, [titulo])
 
   const saveTitulo = () => {
     if (titulo.trim() && titulo !== tarefa.titulo) updateTarefa(tarefa.id, { titulo })
@@ -76,29 +88,30 @@ function DetailView({ tarefa }: { tarefa: Tarefa }) {
   return (
     <>
       {tarefa.capa ? (
-        <div className="relative h-24 w-full rounded-t-xl" style={{ background: tarefa.capa }}>
-          <div className="cover-pattern absolute inset-0 rounded-t-xl opacity-60" />
+        <div className="relative h-24 w-full md:rounded-t-xl" style={{ background: tarefa.capa }}>
+          <div className="cover-pattern absolute inset-0 opacity-60 md:rounded-t-xl" />
         </div>
       ) : (
         <div className="h-3" />
       )}
-      <DialogPrimitive.Close className="absolute right-3 top-3 z-10 rounded-full bg-black/10 p-1.5 text-foreground/80 backdrop-blur transition hover:bg-black/20">
+      <DialogPrimitive.Close className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/10 text-foreground/80 backdrop-blur transition hover:bg-black/20 md:h-auto md:w-auto md:p-1.5">
         <X className="h-4 w-4" />
       </DialogPrimitive.Close>
 
-      <div className="grid grid-cols-[1fr_190px] gap-6 px-6 pb-6 pt-4">
+      <div className="grid grid-cols-1 gap-6 px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 md:grid-cols-[1fr_190px] md:px-6 md:pb-6">
         <div className="min-w-0 space-y-6">
-          <div className="flex gap-3">
+          <div className="flex gap-3 pr-12">
             <CreditCard className="mt-2 h-5 w-5 shrink-0 text-muted-foreground" />
             <div className="min-w-0 flex-1">
               <DialogPrimitive.Title asChild>
                 <textarea
+                  ref={tituloRef}
                   value={titulo}
                   rows={1}
                   onChange={(e) => setTitulo(e.target.value)}
                   onBlur={saveTitulo}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); (e.target as HTMLTextAreaElement).blur() } }}
-                  className="w-full resize-none rounded-md bg-transparent px-1 py-0.5 text-xl font-semibold leading-snug outline-none focus:bg-muted"
+                  className="w-full resize-none overflow-hidden rounded-md bg-transparent px-1 py-0.5 text-xl font-semibold leading-snug outline-none focus:bg-muted"
                 />
               </DialogPrimitive.Title>
               <p className="px-1 text-[13px] text-muted-foreground">
@@ -177,7 +190,7 @@ function DetailView({ tarefa }: { tarefa: Tarefa }) {
           <div>
             <div className="flex items-center justify-between">
               <SectionTitle icon={CheckSquare}>Checklist</SectionTitle>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap justify-end gap-1">
                 <Button size="sm" variant="secondary" className="h-7" onClick={() => updateTarefa(tarefa.id, { checklist_total: total + 1 })}>
                   Adicionar item
                 </Button>
@@ -301,7 +314,7 @@ function DetailView({ tarefa }: { tarefa: Tarefa }) {
 
 function Row({ icon: Icon, label, children }: { icon: typeof Tag; label: string; children: React.ReactNode }) {
   return (
-    <label className="grid grid-cols-[140px_1fr] items-center gap-3 text-sm">
+    <label className="grid grid-cols-1 items-center gap-1 text-sm md:grid-cols-[140px_1fr] md:gap-3">
       <span className="flex items-center gap-2 text-muted-foreground"><Icon className="h-4 w-4" />{label}</span>
       {children}
     </label>
@@ -338,7 +351,7 @@ function CreateView({ draft }: { draft: Partial<Tarefa> }) {
 
   return (
     <form onSubmit={submit} className="space-y-5 p-6">
-      <DialogPrimitive.Close type="button" className="absolute right-3 top-3 rounded-full p-1.5 text-muted-foreground hover:bg-accent">
+      <DialogPrimitive.Close type="button" className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-accent md:h-auto md:w-auto md:p-1.5">
         <X className="h-4 w-4" />
       </DialogPrimitive.Close>
       <DialogPrimitive.Title className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Novo cartão</DialogPrimitive.Title>
@@ -347,7 +360,7 @@ function CreateView({ draft }: { draft: Partial<Tarefa> }) {
         value={String(form.titulo)}
         onChange={(e) => set('titulo', e.target.value)}
         placeholder="Sem título"
-        className="w-full bg-transparent text-3xl font-bold tracking-tight outline-none placeholder:text-muted-foreground/40"
+        className="w-full bg-transparent text-2xl font-bold tracking-tight outline-none placeholder:text-muted-foreground/40 md:text-3xl"
       />
       <div className="space-y-2.5">
         <Row icon={FolderKanban} label="Projeto">
@@ -379,7 +392,7 @@ function CreateView({ draft }: { draft: Partial<Tarefa> }) {
         </Row>
       </div>
       {parseTags(String(form.etiquetas)).length > 0 && (
-        <div className="flex flex-wrap gap-1 pl-[152px]">
+        <div className="flex flex-wrap gap-1 md:pl-[152px]">
           {parseTags(String(form.etiquetas)).map((t) => <span key={t} className={cn('pill', `pill-${tagColor(t)}`)}>{t}</span>)}
         </div>
       )}
@@ -410,9 +423,10 @@ export default function TaskModal() {
         <DialogPrimitive.Content
           aria-describedby={undefined}
           className={cn(
-            'fixed left-1/2 top-[6vh] z-50 max-h-[88vh] w-[calc(100%-2rem)] -translate-x-1/2 overflow-y-auto rounded-xl border bg-card shadow-pop scrollbar-thin',
-            'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-[0.97] data-[state=open]:slide-in-from-top-2',
-            tarefa ? 'max-w-[780px]' : 'max-w-[620px]',
+            'fixed inset-0 z-50 h-dvh w-full max-h-dvh overflow-y-auto rounded-none border bg-card shadow-pop scrollbar-thin',
+            'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-[0.97]',
+            'md:inset-auto md:left-1/2 md:top-[6vh] md:h-auto md:max-h-[88vh] md:w-[calc(100%-2rem)] md:-translate-x-1/2 md:rounded-xl md:data-[state=open]:slide-in-from-top-2',
+            tarefa ? 'md:max-w-[780px]' : 'md:max-w-[620px]',
           )}
         >
           {tarefa ? <DetailView tarefa={tarefa} /> : taskDraft ? <CreateView draft={taskDraft} /> : null}
