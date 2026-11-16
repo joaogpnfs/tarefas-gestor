@@ -50,17 +50,17 @@ export default function Membros() {
   }
 
   return (
-    <div className="mx-auto max-w-[1120px] animate-fade-up px-10 pb-16 pt-10">
+    <div className="mx-auto max-w-[1120px] animate-fade-up px-4 pb-16 pt-8 md:px-10 md:pt-10">
       <div className="text-5xl">👥</div>
-      <div className="mt-3 flex items-end justify-between">
+      <div className="mt-3 flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-[34px] font-bold tracking-tight">Membros</h1>
+          <h1 className="text-[28px] font-bold tracking-tight md:text-[34px]">Membros</h1>
           <p className="text-[15px] text-muted-foreground">{membros.length} pessoas colaborando em {projetos.length} projetos.</p>
         </div>
         <Button onClick={() => abrir()}><UserPlus />Convidar membro</Button>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-4 xl:grid-cols-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {membros.map((m, i) => {
           const ts = tarefas.filter((t) => t.responsavel_id === m.id)
           const done = ts.filter((t) => t.status === 'Concluído').length
@@ -76,7 +76,7 @@ export default function Membros() {
                 <div className="cover-pattern absolute inset-0 opacity-60" />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="absolute right-2 top-2 rounded-md bg-white/20 p-1 text-white opacity-0 backdrop-blur transition group-hover:opacity-100 hover:bg-white/30">
+                    <button className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-md bg-white/20 text-white backdrop-blur transition hover:bg-white/30 md:h-auto md:w-auto md:p-1 md:opacity-0 md:group-hover:opacity-100">
                       <MoreHorizontal className="h-4 w-4" />
                     </button>
                   </DropdownMenuTrigger>
@@ -129,7 +129,7 @@ export default function Membros() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md" aria-describedby={undefined}>
+        <DialogContent className="md:max-w-md" aria-describedby={undefined}>
           <DialogHeader><DialogTitle>{editing ? 'Editar membro' : 'Convidar membro'}</DialogTitle></DialogHeader>
           <form onSubmit={salvar} className="space-y-3">
             <div className="flex justify-center py-2"><Avatar name={form.nome || null} size={56} /></div>

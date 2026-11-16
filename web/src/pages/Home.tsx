@@ -46,7 +46,7 @@ function TaskLine({ t }: { t: Tarefa }) {
         <span className="block truncate text-xs text-muted-foreground">{t.projeto_emoji} {t.projeto_nome}</span>
       </span>
       <PriorityPill prioridade={t.prioridade} />
-      <span className={cn('w-24 text-right text-xs', overdue ? 'font-medium text-[#e03e3e]' : 'text-muted-foreground')}>{relativeDue(t.data_entrega)}</span>
+      <span className={cn('w-20 shrink-0 text-right text-xs sm:w-24', overdue ? 'font-medium text-[#e03e3e]' : 'text-muted-foreground')}>{relativeDue(t.data_entrega)}</span>
     </button>
   )
 }
@@ -89,25 +89,25 @@ export default function Home() {
   if (loading) return <div className="flex h-[60vh] items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>
 
   return (
-    <div className="mx-auto max-w-[1120px] px-10 pb-16 pt-8">
+    <div className="mx-auto max-w-[1120px] px-4 pb-16 pt-6 md:px-10 md:pt-8">
       {/* Saudação */}
-      <div className="animate-fade-up flex items-end justify-between gap-4">
+      <div className="animate-fade-up flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{capitalize(format(now, "EEEE, d 'de' MMMM", { locale: ptBR }))}</p>
-          <h1 className="mt-1 text-[32px] font-bold tracking-tight">{greeting(now)}, {CURRENT_USER_FIRST_NAME} 👋</h1>
+          <h1 className="mt-1 text-[26px] font-bold tracking-tight md:text-[32px]">{greeting(now)}, {CURRENT_USER_FIRST_NAME} 👋</h1>
           <p className="mt-1 text-[15px] text-muted-foreground">
             Você tem <span className="font-medium text-foreground">{hoje.length} tarefa(s) para hoje</span>
             {atrasadas.length > 0 && <> e <span className="font-medium text-[#e03e3e]">{atrasadas.length} atrasada(s)</span></>}.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => setProjectDialogOpen(true)}><FolderKanban />Novo projeto</Button>
           <Button onClick={() => newTask({})}><Plus />Nova tarefa</Button>
         </div>
       </div>
 
       {/* Estatísticas */}
-      <div className="mt-7 grid grid-cols-4 gap-3">
+      <div className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard icon={FolderKanban} label="Projetos ativos" value={projetos.length} hint={`${stats.total} tarefas no total`} chip="bg-[#e8deee] text-[#6940a5] dark:bg-[#492f64] dark:text-[#e2d3f1]" delay={0} />
         <StatCard icon={Sparkles} label="Em andamento" value={stats.doing} hint="sendo trabalhadas agora" chip="bg-[#d3e5ef] text-[#1f6fb5] dark:bg-[#28456c] dark:text-[#cfe3f7]" delay={50} />
         <StatCard icon={CheckCircle2} label="Concluídas" value={stats.done} hint={`${stats.pct}% de todas as tarefas`} chip="bg-[#dbeddb] text-[#2f7a4b] dark:bg-[#2b593f] dark:text-[#d2ecd9]" delay={100} />
@@ -115,7 +115,7 @@ export default function Home() {
       </div>
 
       {/* Gráficos */}
-      <div className="mt-3 grid grid-cols-[1fr_1fr_1.15fr] gap-3">
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1.15fr]">
         <div className="animate-fade-up rounded-xl border bg-card p-4 shadow-card" style={{ animationDelay: '200ms' }}>
           <h3 className="text-sm font-semibold">Tarefas por status</h3>
           <div className="relative mt-1 h-[132px]">
@@ -180,7 +180,7 @@ export default function Home() {
       </div>
 
       {/* Minhas tarefas */}
-      <div className="mt-8 grid grid-cols-[1.35fr_1fr] gap-6">
+      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[1.35fr_1fr]">
         <section className="animate-fade-up" style={{ animationDelay: '350ms' }}>
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight">Minhas tarefas</h2>

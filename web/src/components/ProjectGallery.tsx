@@ -8,7 +8,7 @@ export default function ProjectGallery({ limit }: { limit?: number }) {
   const { projetos, tarefas, setProjectDialogOpen } = useData()
   const list = limit ? projetos.slice(0, limit) : projetos
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
       {list.map((p) => {
         const ts = tarefas.filter((t) => t.projeto_id === p.id)
         const done = ts.filter((t) => t.status === 'Concluído').length

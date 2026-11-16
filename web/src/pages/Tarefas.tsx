@@ -41,38 +41,40 @@ export default function Tarefas({ mine = false }: { mine?: boolean }) {
   ), [base, q, prio, resp, proj])
 
   const chip = (active: boolean) => cn(
-    'flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium transition-colors',
+    'flex h-10 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium transition-colors md:h-7',
     active ? 'border-primary/40 bg-primary/10 text-primary' : 'bg-card text-muted-foreground hover:bg-accent hover:text-foreground',
   )
 
   return (
-    <div className="animate-fade-up px-10 pb-16 pt-10">
+    <div className="animate-fade-up px-4 pb-16 pt-8 md:px-10 md:pt-10">
       <div className="text-5xl">{mine ? '📥' : '✅'}</div>
-      <h1 className="mt-3 text-[34px] font-bold tracking-tight">{mine ? 'Minhas tarefas' : 'Todas as tarefas'}</h1>
+      <h1 className="mt-3 text-[28px] font-bold tracking-tight md:text-[34px]">{mine ? 'Minhas tarefas' : 'Todas as tarefas'}</h1>
       <p className="text-[15px] text-muted-foreground">
         {mine ? 'Tudo o que está atribuído a você, em todos os projetos.' : 'Banco de dados com as tarefas de todos os projetos da equipe.'}
         {' '}<span className="font-medium text-foreground">{base.filter((t) => t.status !== 'Concluído').length} abertas</span>
         {' · '}<span className="font-medium text-[#e03e3e]">{base.filter(isOverdue).length} atrasadas</span>
       </p>
 
-      <div className="mt-6 flex items-center gap-1 border-b">
-        {VIEWS.map((v) => {
-          const Icon = v.icon
-          return (
-            <button key={v.key} onClick={() => setView(v.key)}
-              className={cn('relative flex items-center gap-1.5 px-2.5 pb-2 pt-1.5 text-sm font-medium', view === v.key ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
-              <Icon className="h-4 w-4" />{v.label}
-              {view === v.key && <span className="absolute inset-x-1.5 -bottom-px h-[2px] rounded-full bg-foreground" />}
-            </button>
-          )
-        })}
-        <div className="ml-auto flex items-center gap-1 pb-1.5">
-          <div className="relative">
+      <div className="mt-6 flex flex-col gap-2 border-b md:flex-row md:items-center md:gap-1">
+        <div className="scrollbar-thin -mx-4 flex items-center gap-1 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+          {VIEWS.map((v) => {
+            const Icon = v.icon
+            return (
+              <button key={v.key} onClick={() => setView(v.key)}
+                className={cn('relative flex min-h-10 shrink-0 items-center gap-1.5 px-2.5 pb-2 pt-1.5 text-sm font-medium md:min-h-0', view === v.key ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                <Icon className="h-4 w-4" />{v.label}
+                {view === v.key && <span className="absolute inset-x-1.5 -bottom-px h-[2px] rounded-full bg-foreground" />}
+              </button>
+            )
+          })}
+        </div>
+        <div className="flex items-center gap-1 pb-1.5 md:ml-auto">
+          <div className="relative min-w-0 flex-1 md:flex-none">
             <Search className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar…"
-              className="h-8 w-44 rounded-md bg-transparent pl-7 pr-2 text-sm outline-none placeholder:text-muted-foreground hover:bg-accent focus:bg-card focus:ring-1 focus:ring-border" />
+              className="h-10 w-full rounded-md bg-transparent pl-7 pr-2 text-sm outline-none placeholder:text-muted-foreground hover:bg-accent focus:bg-card focus:ring-1 focus:ring-border md:h-8 md:w-44" />
           </div>
-          <Button size="sm" onClick={() => newTask({ responsavel_id: mine ? currentUser?.id ?? null : null })}><Plus />Novo</Button>
+          <Button size="sm" className="h-10 shrink-0 md:h-8" onClick={() => newTask({ responsavel_id: mine ? currentUser?.id ?? null : null })}><Plus />Novo</Button>
         </div>
       </div>
 
@@ -95,7 +97,7 @@ export default function Tarefas({ mine = false }: { mine?: boolean }) {
             <div className="flex -space-x-1">
               {membros.map((m) => (
                 <button key={m.id} onClick={() => setResp(resp === m.id ? null : m.id)} title={m.nome}
-                  className={cn('rounded-full transition hover:z-10 hover:scale-110', resp === m.id && 'z-10 ring-2 ring-primary ring-offset-1 ring-offset-background')}>
+                  className={cn('rounded-full p-1.5 transition hover:z-10 hover:scale-110 md:p-0', resp === m.id && 'z-10 ring-2 ring-primary ring-offset-1 ring-offset-background')}>
                   <Avatar name={m.nome} size={26} ring />
                 </button>
               ))}

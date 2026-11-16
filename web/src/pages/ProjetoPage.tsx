@@ -36,9 +36,9 @@ function prazoLabel(prazo: string): string {
 
 function PropRow({ icon: Icon, label, children }: { icon: typeof Users; label: string; children: React.ReactNode }) {
   return (
-    <div className="flex min-h-[30px] items-center">
-      <div className="flex w-40 shrink-0 items-center gap-2 text-sm text-muted-foreground"><Icon className="h-4 w-4" />{label}</div>
-      <div className="flex min-w-0 flex-1 items-center gap-2 rounded px-1.5 py-1 text-sm hover:bg-accent/60">{children}</div>
+    <div className="flex min-h-[30px] flex-col items-start gap-0.5 py-1.5 md:flex-row md:items-center md:gap-0 md:py-0">
+      <div className="flex w-auto shrink-0 items-center gap-2 text-sm text-muted-foreground md:w-40"><Icon className="h-4 w-4" />{label}</div>
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 rounded px-1.5 py-1 text-sm hover:bg-accent/60">{children}</div>
     </div>
   )
 }
@@ -97,18 +97,18 @@ export default function ProjetoPage() {
   return (
     <div className="animate-fade-up">
       {/* Capa */}
-      <div className="group relative h-[168px] w-full" style={{ background: coverCss(projeto.capa, projeto.cor) }}>
+      <div className="group relative h-[120px] w-full md:h-[168px]" style={{ background: coverCss(projeto.capa, projeto.cor) }}>
         <div className="cover-pattern absolute inset-0 opacity-70" />
-        <div className="absolute bottom-3 right-12 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute bottom-3 right-4 flex gap-1 md:right-12 md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
           <button
             onClick={() => updateProjeto(projeto.id, { capa: coverKeys[(coverKeys.indexOf(projeto.capa ?? '') + 1) % coverKeys.length] })}
-            className="rounded-md bg-white/85 px-2.5 py-1 text-xs font-medium text-[#37352f] shadow-sm backdrop-blur hover:bg-white">
+            className="min-h-10 rounded-md bg-white/85 px-2.5 py-1 text-xs font-medium text-[#37352f] shadow-sm backdrop-blur hover:bg-white md:min-h-0">
             Trocar capa
           </button>
         </div>
       </div>
 
-      <div className="px-12 xl:px-20">
+      <div className="px-4 md:px-12 xl:px-20">
         {/* Ícone */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -132,12 +132,12 @@ export default function ProjetoPage() {
             onChange={(e) => setNome(e.target.value)}
             onBlur={() => nome.trim() && nome !== projeto.nome ? updateProjeto(projeto.id, { nome }) : setNome(projeto.nome)}
             onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-            className="min-w-0 flex-1 bg-transparent text-[38px] font-bold leading-tight tracking-tight outline-none"
+            className="min-w-0 flex-1 bg-transparent text-[28px] font-bold leading-tight tracking-tight outline-none md:text-[38px]"
             aria-label="Título do projeto"
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="mt-3 text-muted-foreground"><MoreHorizontal /></Button>
+              <Button variant="ghost" size="icon" className="mt-3 h-10 w-10 text-muted-foreground md:h-8 md:w-8"><MoreHorizontal /></Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={() => updateProjeto(projeto.id, { capa: coverKeys[(coverKeys.indexOf(projeto.capa ?? '') + 1) % coverKeys.length] })}>
@@ -173,7 +173,7 @@ export default function ProjetoPage() {
             ) : <span className="text-muted-foreground">Vazio</span>}
           </PropRow>
           <PropRow icon={ListChecks} label="Progresso">
-            <div className="h-1.5 w-48 overflow-hidden rounded-full bg-muted">
+            <div className="h-1.5 w-24 max-w-full overflow-hidden rounded-full bg-muted md:w-48">
               <div className="h-full rounded-full bg-[#3c8a5a] transition-all duration-700" style={{ width: `${pct}%` }} />
             </div>
             <span className="font-medium">{pct}%</span>
@@ -182,36 +182,38 @@ export default function ProjetoPage() {
         </div>
 
         {/* Abas de visualização */}
-        <div className="mt-4 flex items-center gap-1 border-b">
-          {VIEWS.map((v) => {
-            const Icon = v.icon
-            const active = view === v.key
-            return (
-              <button key={v.key} onClick={() => setView(v.key)}
-                className={cn('relative flex items-center gap-1.5 rounded-t-md px-2.5 pb-2 pt-1.5 text-sm font-medium transition-colors',
-                  active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
-                <Icon className="h-4 w-4" />{v.label}
-                {active && <span className="absolute inset-x-1.5 -bottom-px h-[2px] rounded-full bg-foreground" />}
-              </button>
-            )
-          })}
-          <div className="ml-auto flex items-center gap-1 pb-1.5">
-            <Button variant="ghost" size="sm" className="text-muted-foreground"><SlidersHorizontal />Filtrar</Button>
-            <Button variant="ghost" size="sm" className="text-muted-foreground"><ArrowUpDown />Ordenar</Button>
-            <div className="relative">
+        <div className="mt-4 flex flex-col gap-2 border-b md:flex-row md:items-center md:gap-1">
+          <div className="scrollbar-thin -mx-4 flex items-center gap-1 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+            {VIEWS.map((v) => {
+              const Icon = v.icon
+              const active = view === v.key
+              return (
+                <button key={v.key} onClick={() => setView(v.key)}
+                  className={cn('relative flex min-h-10 shrink-0 items-center gap-1.5 rounded-t-md px-2.5 pb-2 pt-1.5 text-sm font-medium transition-colors md:min-h-0',
+                    active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                  <Icon className="h-4 w-4" />{v.label}
+                  {active && <span className="absolute inset-x-1.5 -bottom-px h-[2px] rounded-full bg-foreground" />}
+                </button>
+              )
+            })}
+          </div>
+          <div className="flex flex-wrap items-center gap-1 pb-1.5 md:ml-auto md:flex-nowrap">
+            <Button variant="ghost" size="sm" className="hidden text-muted-foreground md:inline-flex"><SlidersHorizontal />Filtrar</Button>
+            <Button variant="ghost" size="sm" className="hidden text-muted-foreground md:inline-flex"><ArrowUpDown />Ordenar</Button>
+            <div className="relative min-w-0 flex-1 md:flex-none">
               <Search className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar…"
-                className="h-8 w-40 rounded-md bg-transparent pl-7 pr-2 text-sm outline-none transition-all placeholder:text-muted-foreground hover:bg-accent focus:w-52 focus:bg-card focus:ring-1 focus:ring-border" />
+                className="h-10 w-full rounded-md bg-transparent pl-7 pr-2 text-sm outline-none transition-all placeholder:text-muted-foreground hover:bg-accent focus:bg-card focus:ring-1 focus:ring-border md:h-8 md:w-40 md:focus:w-52" />
             </div>
-            <div className="flex">
-              <Button size="sm" className="rounded-r-none" onClick={() => newTask({ projeto_id: projeto.id })}><Plus />Novo</Button>
-              <Button size="sm" className="rounded-l-none border-l border-white/25 px-1.5"><ChevronDown /></Button>
+            <div className="flex shrink-0">
+              <Button size="sm" className="h-10 rounded-r-none md:h-8" onClick={() => newTask({ projeto_id: projeto.id })}><Plus />Novo</Button>
+              <Button size="sm" className="hidden rounded-l-none border-l border-white/25 px-1.5 md:inline-flex"><ChevronDown /></Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={cn('pt-4', view === 'quadro' ? 'pl-12 xl:pl-20' : 'px-12 pb-16 xl:px-20')}>
+      <div className={cn('pt-4', view === 'quadro' ? 'pl-4 md:pl-12 xl:pl-20' : 'px-4 pb-16 md:px-12 xl:px-20')}>
         {view === 'quadro' && <BoardView tarefas={filtradas} projetoId={projeto.id} />}
         {view === 'tabela' && <TableView tarefas={filtradas} projetoId={projeto.id} />}
         {view === 'lista' && <ListView tarefas={filtradas} />}
